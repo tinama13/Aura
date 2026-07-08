@@ -1,0 +1,276 @@
+{
+  "activityEntities" : [
+    "dataSourceTrainingStarted",
+    [
+      {
+        "createdDate" : "2026-07-08T15:59:11Z",
+        "event" : "dataSourceTrainingStarted",
+        "id" : "0E833F43-C828-4307-AEF6-6A962621C760",
+        "subtitle" : "AuraSoundDetection 1",
+        "title" : "Used By"
+      },
+      {
+        "createdDate" : "2026-07-08T16:03:39Z",
+        "event" : "dataSourceTrainingStarted",
+        "id" : "09BDCB6C-B05B-45AA-92B6-56B2CF7B4590",
+        "subtitle" : "AuraSoundDetection 2",
+        "title" : "Used By"
+      },
+      {
+        "createdDate" : "2026-07-08T16:07:02Z",
+        "event" : "dataSourceTrainingStarted",
+        "id" : "E1DA4E6D-C7F7-42EB-BC8D-62C264775C7D",
+        "subtitle" : "AuraSoundDetection 3",
+        "title" : "Used By"
+      },
+      {
+        "createdDate" : "2026-07-08T16:09:36Z",
+        "event" : "dataSourceTrainingStarted",
+        "id" : "43F8CB74-D291-439C-B1C6-00A55C607030",
+        "subtitle" : "AuraSoundDetection 4",
+        "title" : "Used By"
+      }
+    ],
+    "dataSourceMetrics",
+    [
+      {
+        "createdDate" : "2026-07-08T15:59:11Z",
+        "event" : "dataSourceMetrics",
+        "id" : "0F1DF39A-5C35-4DE9-BCDC-AF6704DEA730",
+        "subtitle" : "3 Classes, 13 Items",
+        "title" : "Data Summary"
+      },
+      {
+        "createdDate" : "2026-07-08T16:03:39Z",
+        "event" : "dataSourceMetrics",
+        "id" : "16D913DE-5B48-44E8-AC4C-F16DD750CE29",
+        "subtitle" : "3 Classes, 19 Items",
+        "title" : "Data Summary"
+      },
+      {
+        "createdDate" : "2026-07-08T16:07:02Z",
+        "event" : "dataSourceMetrics",
+        "id" : "A37040DA-AACE-4BE6-B971-E6C0FE88070C",
+        "subtitle" : "3 Classes, 31 Items",
+        "title" : "Data Summary"
+      },
+      {
+        "createdDate" : "2026-07-08T16:09:36Z",
+        "event" : "dataSourceMetrics",
+        "id" : "B7B4AC8A-22DA-46DE-94CF-9CC1ECA20AD1",
+        "subtitle" : "3 Classes, 35 Items",
+        "title" : "Data Summary"
+      }
+    ],
+    "dataSourceCreated",
+    [
+      {
+        "createdDate" : "2026-07-08T15:56:31Z",
+        "event" : "dataSourceCreated",
+        "id" : "5BF69B51-A120-4C1C-A182-2B96130D3841",
+        "subtitle" : "Training_Data",
+        "title" : "Data Source Created"
+      }
+    ]
+  ],
+  "createdDate" : "2026-07-08T15:56:31Z",
+  "dataPathRelativeToProjectURL" : "../Training_Data/",
+  "dataResult" : {
+    "classesCount" : 3,
+    "createdDate" : "2026-07-08T15:56:31Z",
+    "dataAnalysis" : {
+      "classifierAnalysis" : {
+        "details" : [
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861226__beaconstudio__noise1-hiss.wav",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/spinopel-market-background-noise-281247.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/263759__darthbaul__dog-barking-in-mountains.wav",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-radio-static-6382.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-underwater-white-noise-46423.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/pwlpl-tornado-warning-siren-sound-effect-359252.mp3",
+          [
+            "tornado"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/freesound_community-multiple-tornado-alarms-17375.mp3",
+          [
+            "tornado"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-barking-dog-cute-sound-463192.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861227__beaconstudio__noise2-hum.wav",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-white-noise-6971.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/180977__superstudiobr__barking-dog.wav",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-barking-sound-effect-427408.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/pwlpl-tornado-warning-siren-sound-effect-359251.mp3",
+          [
+            "tornado"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/extrasounds-white-noise-358382.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/freesound_community-siren-warning-all-clear-signal-22562.mp3",
+          [
+            "tornado"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-white-noise-sweep-up-85276.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-barking-406629.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/121532__thaighaudio__2010-01-05-tornado-siren-test.flac",
+          [
+            "tornado"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861230__beaconstudio__noise-4-crescendo-hum.wav",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/freesound_community-tornado-siren-in-streamwood-il-35510.mp3",
+          [
+            "tornado"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861232__beaconstudio__noise-6-helicopter-rumble.wav",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-background-noise-45700.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/72831__audible-edge__tornado-siren-in-streamwood-il.wav",
+          [
+            "tornado"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/612858__weak_hero__dog.wav",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/dragon-studio-soothing-white-noise-323619.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/515695__filmscore__tornado-sirens-tulsa.wav",
+          [
+            "tornado"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861231__beaconstudio__noise-5-high-hiss.wav",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/u_vshmonplts-crowd-noise-390947.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/blendertimer-white-noise-8117.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861228__beaconstudio__noise3-ambience.wav",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-free-dog-bark-419014.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/749352__wateenfotos__barking-ines-3.wav",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-distant-dog-barking-472373.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barking-101729.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-bark-382732.mp3",
+          [
+            "dog_barking"
+          ]
+        ],
+        "labelStats" : {
+          "dog_barking" : 11,
+          "silence" : 16,
+          "tornado" : 8
+        }
+      },
+      "issues" : [
+        {
+          "description" : "3 classes found, including silence, dog_barking, tornado",
+          "severity" : "debug"
+        },
+        {
+          "description" : "Less than 50 total sounds found - add more to improve model validation",
+          "severity" : "warning"
+        },
+        {
+          "description" : "Smallest class is \"tornado\" with 8 sounds",
+          "severity" : "debug"
+        },
+        {
+          "description" : "Largest class is \"silence\" with 16 sounds",
+          "severity" : "debug"
+        }
+      ],
+      "objectDetectorAnalysis" : {
+        "details" : {
+
+        }
+      },
+      "summary" : {
+        "canUseValidation" : 0,
+        "classCount" : 3,
+        "sampleCount" : 35
+      },
+      "warning" : "Less than 50 total sounds found - add more to improve model validation"
+    },
+    "dataSourceID" : "00A0A504-FA97-4030-9298-B0DD6A35C653",
+    "dataURL" : "file:///Users/tinama/Documents/Aura/Training_Data/",
+    "itemsCount" : 35,
+    "warning" : "Less than 50 total sounds found - add more to improve model validation"
+  },
+  "dataURL" : "file:///Users/tinama/Documents/Aura/Training_Data/",
+  "experimentIDs" : [
+    "D6111223-37FA-4037-969B-1F126E44E932"
+  ],
+  "id" : "00A0A504-FA97-4030-9298-B0DD6A35C653",
+  "modifiedDate" : "2026-07-08T16:11:12Z",
+  "pathType" : 0,
+  "preferredFilename" : "Training_Data",
+  "title" : "Training_Data",
+  "version" : "1.0"
+}

@@ -1,0 +1,29 @@
+{
+  "activityEntities" : [
+    "projectCreated",
+    [
+      {
+        "createdDate" : "2026-07-08T15:36:40Z",
+        "event" : "projectCreated",
+        "id" : "7ED722F3-B949-4AA3-8230-4B846ACFE0F3",
+        "subtitle" : "AuraSoundDetection",
+        "title" : "Project Created"
+      }
+    ]
+  ],
+  "authorName" : "Tina Ma",
+  "createdDate" : "2026-07-08T15:36:40Z",
+  "description" : "",
+  "id" : "B3FCACD4-790E-4902-827A-62F4E2CD2F5E",
+  "license" : "",
+  "location" : "",
+  "modifiedDate" : "2026-07-08T15:36:40Z",
+  "projectName" : "AuraSoundDetection",
+  "settingsEntity" : {
+    "snapshotOnExtendTraining" : true,
+    "snapshotOnResumeTraining" : false
+  },
+  "taskType" : "audioClassifier",
+  "title" : "Sound Classification",
+  "version" : "1.1"
+}
