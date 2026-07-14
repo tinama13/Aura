@@ -27,11 +27,13 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack {
-                if current_tab == .home {
+                switch current_tab {
+                case .home:
                     HomeView()
-                } else {
-                    Text("\(current_tab.rawValue) Screen")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                case .presets:
+                    PresetsView()
+                case .sounds:
+                    SoundsView()
                 }
             }
             .padding(.bottom, 90)
@@ -40,7 +42,7 @@ struct ContentView: View {
         .edgesIgnoringSafeArea(.bottom)
     }
 }
-
+//safsffsa fas
 #Preview {
     ContentView()
 }
