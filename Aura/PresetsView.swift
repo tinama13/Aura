@@ -74,7 +74,7 @@ struct PresetsView: View {
                     .fontWeight(.bold)
                     .foregroundStyle(.black)
 
-                VStack(spacing: 12) {
+                VStack(spacing: 8) {
                     ForEach(selectedPreset.categories, id: \.self) { category in
                         CategoryRow(
                             title: category,
@@ -172,13 +172,13 @@ private enum PresetMode: String, CaseIterable, Identifiable {
     var categories: [String] {
         switch self {
         case .driving:
-            return ["Sirens and alarms", "Car horns", "Emergency vehicles", "Train crossings"]
+            return ["Sirens and alarms", "Car horns", "Emergency vehicles", "Train crossings", "Motorcycles", "Tires screeching"]
         case .walking:
-            return ["Crosswalk signals", "Bike bells", "Approaching cars", "People shouting"]
+            return ["Crosswalk signals", "Bike bells", "Approaching cars", "People shouting", "Scooters", "Dogs barking"]
         case .home:
-            return ["Doorbell", "Kitchen timer", "Smoke alarm", "Baby crying"]
+            return ["Doorbell", "Kitchen timer", "Smoke alarm", "Baby crying", "Glass breaking", "Appliance beeps"]
         case .publicPlace:
-            return ["Name called", "Announcements", "Phone ringing", "Loud alarms"]
+            return ["Name called", "Announcements", "Phone ringing", "Loud alarms", "Crowd alerts", "Security beeps"]
         }
     }
 }
@@ -192,9 +192,9 @@ private struct PresetModeButton: View {
         Button(action: action) {
             VStack(spacing: 8) {
                 Image(systemName: preset.iconName)
-                    .font(.system(size: 38, weight: .bold))
+                    .font(.system(size: 44, weight: .bold))
                     .foregroundStyle(.black.opacity(0.9))
-                    .frame(height: 44)
+                    .frame(width: 62, height: 54)
 
                 Text(preset.title)
                     .font(.custom("Itim", size: 28))
@@ -202,7 +202,7 @@ private struct PresetModeButton: View {
                     .foregroundStyle(.black)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 116)
+            .frame(height: 104)
             .background(isSelected ? Color(red: 0.85, green: 0.95, blue: 1.0) : Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .overlay {
@@ -223,7 +223,7 @@ private struct CategoryRow: View {
         Button(action: action) {
             HStack {
                 Text(title)
-                    .font(.custom("Itim", size: 20))
+                    .font(.custom("Itim", size: 17))
                     .fontWeight(.bold)
                     .foregroundStyle(.black)
 
@@ -231,12 +231,12 @@ private struct CategoryRow: View {
 
                 if isSelected {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 19, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(.black)
                 }
             }
             .padding(.horizontal, 10)
-            .frame(height: 47)
+            .frame(height: 36)
             .background(Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
             .overlay {
