@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct PresetsView: View {
+  
     var body: some View {
         VStack {
-                    Text("Hello, Presets!")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            Text("Hello, Presets!")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
