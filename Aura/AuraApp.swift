@@ -12,6 +12,7 @@ struct AuraApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+            //yolo :D
         }
     }
 }

@@ -7,18 +7,40 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+enum Tab: String, CaseIterable {
+    case home = "Home"
+    case presets = "Presets"
+    case sounds = "Sounds"
+    
+    var iconName: String {
+        switch self {
+        case .home: return "house"
+        case .presets: return "slider.horizontal.3"
+        case .sounds: return "speaker"
         }
-        .padding()
     }
 }
 
+struct ContentView: View {
+    @State private var current_tab: Tab = .home
+    
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            VStack {
+                if current_tab == .home {
+                    HomeView()
+                } else {
+                    Text("\(current_tab.rawValue) Screen")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+            .padding(.bottom, 90)
+            NavBar(current_tab: $current_tab)
+        }
+        .edgesIgnoringSafeArea(.bottom)
+    }
+}
+//safsffsa fas
 #Preview {
     ContentView()
 }
