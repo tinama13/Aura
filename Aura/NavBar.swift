@@ -32,7 +32,7 @@ struct NavBar: View {
                             )
                         
                         Text(tab.rawValue)
-                            .font(.caption2)
+                            .font(.custom("MarkerFelt-Thin", size: 11))
                             .foregroundColor(.black.opacity(0.7))
                     }
                 }

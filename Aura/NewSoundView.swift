@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct NewSoundView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var soundManager: SoundManager
+    @StateObject private var audioRecorder = AudioRecorder()
+    
     @State private var showNamingScreen = false
     @State private var currentStep: Int = 1
     
@@ -32,7 +36,10 @@ struct NewSoundView: View {
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: showNamingScreen)
         .onDisappear {
             stopTimer()
+            if isRecording { audioRecorder.stopRecording() }
+            audioRecorder.stopPlayback()
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     private var recordingScreen: some View {
@@ -46,7 +53,7 @@ struct NewSoundView: View {
                 }
                 
                 Text("Aura")
-                    .font(.custom("Georgia-BoldItalic", size: 28))
+                    .font(.custom("MarkerFelt-Thin", size: 30))
                 
                 Spacer()
             }
@@ -90,6 +97,15 @@ struct NewSoundView: View {
                         .font(.system(size: 54))
                         .foregroundColor(isRecording ? .red : (isReviewingSample ? .green : .black))
                 }
+                .onTapGesture {
+                    if isReviewingSample {
+                        if audioRecorder.isPlaying {
+                            audioRecorder.stopPlayback()
+                        } else {
+                            audioRecorder.startPlayback(fileName: "Aura_Sample_\(currentStep)")
+                        }
+                    }
+                }
                 
                 if isRecording {
                     Text(String(format: "0:%02d / 0:10", timeElapsed))
@@ -112,6 +128,7 @@ struct NewSoundView: View {
             if isReviewingSample {
                 HStack(spacing: 16) {
                     Button(action: {
+                        audioRecorder.stopPlayback()
                         withAnimation { isReviewingSample = false }
                     }) {
                         Text("Record again")
@@ -202,6 +219,8 @@ struct NewSoundView: View {
             
             Button(action: {
                 print("Saving sound: \(soundName) with note: \(soundNote)")
+                soundManager.addSound(name: soundName)
+                dismiss()
             }) {
                 Text("Save to Library")
                     .font(.system(size: 16, weight: .bold))
@@ -218,6 +237,7 @@ struct NewSoundView: View {
     }
     
     private func goBack() {
+        audioRecorder.stopPlayback()
         withAnimation(.easeInOut) {
             if showNamingScreen {
                 showNamingScreen = false
@@ -225,10 +245,11 @@ struct NewSoundView: View {
                 isReviewingSample = false
             } else if currentStep > 1 {
                 stopTimer()
+                if isRecording { audioRecorder.stopRecording() }
                 isRecording = false
                 currentStep -= 1
             } else {
-                print("Dismiss View")
+                dismiss()
             }
         }
     }
@@ -248,24 +269,25 @@ struct NewSoundView: View {
         isReviewingSample = false
         timeElapsed = 0
         
+        audioRecorder.startRecording(fileName: "Aura_Sample_\(currentStep)")
+        
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             timeElapsed += 1
-            
             if timeElapsed >= 10 {
-                withAnimation(.easeInOut) {
-                    finishCurrentSample()
-                }
+                withAnimation(.easeInOut) { finishCurrentSample() }
             }
         }
     }
     
     private func finishCurrentSample() {
         stopTimer()
+        audioRecorder.stopRecording()
         isRecording = false
         isReviewingSample = true
     }
     
     private func advanceToNextStep() {
+        audioRecorder.stopPlayback()
         withAnimation(.easeInOut) {
             isReviewingSample = false
             if currentStep < 3 {
@@ -286,13 +308,17 @@ struct NewSoundView: View {
     }
     
     private var centerStatusText: String {
-        if isReviewingSample { return "Sample Recorded" }
+        if isReviewingSample {
+            return audioRecorder.isPlaying ? "Playing..." : "Tap to listen"
+        }
         return currentStep <= 3 ? "Record sample \(currentStep)" : "Sound Recorded"
     }
     
     private var centerIconName: String {
         if isRecording { return "waveform" }
-        if isReviewingSample { return "checkmark" }
+        if isReviewingSample {
+            return audioRecorder.isPlaying ? "stop.fill" : "play.fill"
+        }
         return "mic"
     }
     
