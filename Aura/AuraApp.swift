@@ -6,13 +6,19 @@
 //
 
 import SwiftUI
-
+import Combine
 @main
 struct AuraApp: App {
+    @StateObject private var soundManager = SoundManager()
+    @StateObject private var presetManager = PresetManager()
+    @StateObject private var historyManager = HistoryManager()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-            //yolo :D
+                .environmentObject(soundManager)
+                .environmentObject(presetManager)
+                .environmentObject(historyManager)
         }
     }
 }

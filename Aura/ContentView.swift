@@ -42,7 +42,10 @@ struct ContentView: View {
         .edgesIgnoringSafeArea(.bottom)
     }
 }
-//safsffsa fas
+
 #Preview {
     ContentView()
+        .environmentObject(SoundManager())
+        .environmentObject(PresetManager())
+        .environmentObject(HistoryManager())
 }

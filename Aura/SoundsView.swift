@@ -2,98 +2,128 @@
 //  SoundsView.swift
 //  Aura
 //
-//  Created by Tina Ma on 7/8/26.
+//  Created by Tina Ma on 7/14/26.
 //
 
 import SwiftUI
 
-// One sound the app can listen for. Identifiable lets ForEach tell rows apart.
-struct Sound: Identifiable {
-    let id = UUID()
-    let name: String
-    var isSelected = false
-}
-
 struct SoundsView: View {
-    @State private var isAddingSound = false
-
-    // The sounds shown in the list. Later this can come from SoundAnalysis
-    // or the user's own trained sounds instead of being hardcoded.
-    @State private var sounds = [
-        Sound(name: "Sirens and alarms", isSelected: true),
-        Sound(name: "Car horns"),
-        Sound(name: "Dog barking"),
-        Sound(name: "Microwave Beeping"),
-        Sound(name: "Knocking"),
-        Sound(name: "Kettle"),
-        Sound(name: "Baby crying"),
-        Sound(name: "Doorbell"),
-    ]
-
-    func addSound() {
-        isAddingSound = true
+    @EnvironmentObject var soundManager: SoundManager
+    
+    var groupedSounds: [(String, [Sound])] {
+        let sorted = soundManager.sounds.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        
+        let grouped = Dictionary(grouping: sorted) { sound in
+            String(sound.name.prefix(1)).uppercased()
+        }
+        
+        return grouped.sorted { $0.key < $1.key }
     }
+    
+    let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    
     var body: some View {
-        VStack {
-            HStack {
-                Text("Aura")
-                    .font(.custom("Noteworthy", size: 20))
-                    .fontWeight(.bold)
-                Spacer()
-                
-            }.padding()
-            HStack {
-                Text("All Sounds").font(.system(size: 25, weight: .bold))
-                Spacer()
-                
-                Button {
-                    addSound()
-                } label: {
-                    Image(systemName: "plus").font(.system(size: 25, weight: .bold))
-                        .foregroundStyle(Color(red: 0.204, green: 0.678, blue: 0.914))          // plus sign color
-                        .frame(width: 44, height: 44)     // fixed circle size — plus size won't change it
-                        .background(Circle().fill(Color(white: 0.85)))   // circle color
-                        .overlay(
-                            Circle().stroke(.black, lineWidth: 1)  // tiny line around the circle
-                        )
+        NavigationStack {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Aura")
+                        .font(.custom("MarkerFelt-Thin", size: 30))
+                    Spacer()
                 }
-                .buttonStyle(.plain)
-                .padding()
-            }
-            
-            .padding(.leading)
-
-            
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach($sounds) { $sound in
-                        Button {
-                            sound.isSelected.toggle()
-                        } label: {
-                            HStack {
-                                Text(sound.name)
-                                Spacer()
-//                                if sound.isSelected {
-//                                    Image(systemName: "checkmark")
-                                        .fontWeight(.semibold)
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                
+                HStack {
+                    Text("All Sounds")
+                        .font(.system(size: 25, weight: .bold))
+                    Spacer()
+                    
+                    NavigationLink(destination: NewSoundView()) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundStyle(Color(red: 0.204, green: 0.678, blue: 0.914))
+                            .frame(width: 40, height: 40)
+                            .background(Circle().fill(Color(white: 0.93)))
+                            .overlay(Circle().stroke(.black, lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 8)
+                
+                ScrollViewReader { proxy in
+                    
+                    HStack(spacing: 0) {
+                        
+                        ScrollView {
+                            VStack(spacing: 24) {
+                                ForEach(groupedSounds, id: \.0) { letter, soundsInGroup in
+                                    VStack(spacing: 12) {
+                                        HStack {
+                                            Text(letter)
+                                                .font(.system(size: 20, weight: .bold))
+                                                .foregroundColor(.gray)
+                                            Spacer()
+                                        }
+                                        .id(letter)
+                                        
+                                        ForEach(soundsInGroup) { sound in
+                                            NavigationLink(destination: SoundDetailView(soundName: sound.name)) {
+                                                HStack {
+                                                    Text(sound.name)
+                                                        .font(.system(size: 18, weight: .medium))
+                                                        .foregroundColor(.black)
+                                                    Spacer()
+                                                    Image(systemName: "chevron.right")
+                                                        .foregroundColor(.gray)
+                                                }
+                                                .padding()
+                                                .background(Color.white)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 12)
+                                                        .stroke(.black, lineWidth: 1)
+                                                )
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                    }
                                 }
                             }
-                            .padding()
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(.black, lineWidth: 1)
-                            )
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 20)
                         }
-                        .buttonStyle(.plain)
+                        
+                        VStack(spacing: 2) {
+                            ForEach(alphabet, id: \.self) { char in
+                                let letter = String(char)
+                                Text(letter)
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundColor(Color(red: 0.204, green: 0.678, blue: 0.914))
+                                    .frame(width: 24, height: 16)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        if groupedSounds.contains(where: { $0.0 == letter }) {
+                                            withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
+                                                proxy.scrollTo(letter, anchor: .top)
+                                            }
+                                        }
+                                    }
+                            }
+                        }
+                        .padding(.trailing, 6)
+                        
                     }
                     .padding(.horizontal)
                 }
-                .padding(.horizontal)
+                
             }
         }
     }
-
+}
 
 #Preview {
     SoundsView()
+        .environmentObject(SoundManager())
+        .environmentObject(PresetManager())
+        .environmentObject(HistoryManager())
 }
