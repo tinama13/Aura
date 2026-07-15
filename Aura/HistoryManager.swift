@@ -28,9 +28,35 @@ struct DetectedEvent: Identifiable, Hashable {
     let id = UUID()
     let name: String
     let timestamp: Date
+    let endedAt: Date?
     let timeline: [TimelineNode]
     
     var audioFileURL: URL?
+    
+    var durationText: String? {
+        guard let endedAt else { return nil }
+        let seconds = max(1, Int(endedAt.timeIntervalSince(timestamp).rounded()))
+        return "it stayed active for about \(formattedDuration(seconds))"
+    }
+    
+    var silenceText: String? {
+        guard let endedAt else { return nil }
+        let seconds = max(1, Int(endedAt.timeIntervalSince(timestamp).rounded()))
+        return "the area quieted down about \(formattedDuration(seconds)) after detection"
+    }
+    
+    private func formattedDuration(_ totalSeconds: Int) -> String {
+        if totalSeconds < 60 {
+            return "\(totalSeconds) \(totalSeconds == 1 ? "second" : "seconds")"
+        }
+        
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+        let minuteText = "\(minutes) \(minutes == 1 ? "minute" : "minutes")"
+        guard seconds > 0 else { return minuteText }
+        let secondText = "\(seconds) \(seconds == 1 ? "second" : "seconds")"
+        return "\(minuteText) and \(secondText)"
+    }
     
     var timeAgo: String {
         let minutes = Int(Date().timeIntervalSince(timestamp) / 60)
@@ -44,8 +70,8 @@ struct DetectedEvent: Identifiable, Hashable {
 class HistoryManager: ObservableObject {
     @Published var events: [DetectedEvent] = []
     
-    func logEvent(name: String, timeline: [TimelineNode], audioFileURL: URL? = nil) -> DetectedEvent {
-        let newEvent = DetectedEvent(name: name, timestamp: Date(), timeline: timeline, audioFileURL: audioFileURL)
+    func logEvent(name: String, timestamp: Date = Date(), endedAt: Date? = nil, timeline: [TimelineNode], audioFileURL: URL? = nil) -> DetectedEvent {
+        let newEvent = DetectedEvent(name: name, timestamp: timestamp, endedAt: endedAt, timeline: timeline, audioFileURL: audioFileURL)
         events.insert(newEvent, at: 0)
         return newEvent
     }

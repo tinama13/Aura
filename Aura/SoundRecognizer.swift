@@ -16,6 +16,8 @@ struct SoundDetection: Identifiable, Equatable {
     let name: String
     let confidence: Double
     let timestamp: Date
+    let endedAt: Date
+    let timeline: [TimelineNode]
     let audioFileURL: URL?
 }
 
@@ -33,6 +35,12 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         let audioFile: AVAudioFile
         let targetFrameCount: AVAudioFramePosition
         var writtenFrameCount: AVAudioFramePosition
+        var lastActiveAt: Date
+        var quietingLogged: Bool
+        var louderLogged: Bool
+        var startLevel: Float?
+        var peakLevel: Float
+        var timeline: [TimelineNode]
     }
     
     private let audioEngine = AVAudioEngine()
@@ -47,6 +55,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     
     private let detectionRecordingDuration: TimeInterval = 8
     private let minimumConfidence = 0.75
+    private let activeSoundConfidence = 0.55
     private let requiredConsecutiveMatches = 1
     private let detectionCooldown: TimeInterval = 6
     
@@ -108,6 +117,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         
         let label = bestClassification.identifier
         let confidence = bestClassification.confidence
+        updatePendingRecording(with: label, confidence: confidence, at: Date())
         
         guard confidence >= minimumConfidence, !isNonActionableLabel(label) else {
             currentCandidate = nil
@@ -125,8 +135,9 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         guard candidateCount >= requiredConsecutiveMatches else { return }
         guard canEmitDetection(for: label) else { return }
         
-        lastDetectionTimes[label] = Date()
-        startDetectionRecording(label: label, confidence: confidence, detectedAt: Date())
+        let detectedAt = Date()
+        lastDetectionTimes[label] = detectedAt
+        startDetectionRecording(label: label, confidence: confidence, detectedAt: detectedAt)
     }
     
     func request(_ request: SNRequest, didFailWithError error: Error) {
@@ -173,7 +184,13 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
                 fileURL: fileURL,
                 audioFile: audioFile,
                 targetFrameCount: targetFrameCount,
-                writtenFrameCount: 0
+                writtenFrameCount: 0,
+                lastActiveAt: detectedAt,
+                quietingLogged: false,
+                louderLogged: false,
+                startLevel: nil,
+                peakLevel: 0,
+                timeline: [TimelineNode(exactTime: detectedAt, label: contextStartLabel(for: label))]
             )
             
             audioBufferLock.lock()
@@ -188,10 +205,29 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         }
     }
     
+    private func updatePendingRecording(with label: String, confidence: Double, at date: Date) {
+        audioBufferLock.lock()
+        guard var recording = pendingDetectionRecording else {
+            audioBufferLock.unlock()
+            return
+        }
+        
+        if label == recording.label && confidence >= activeSoundConfidence {
+            recording.lastActiveAt = date
+        } else if !recording.quietingLogged {
+            recording.timeline.append(TimelineNode(exactTime: date, label: contextQuietingLabel(for: recording.label)))
+            recording.quietingLogged = true
+        }
+        
+        pendingDetectionRecording = recording
+        audioBufferLock.unlock()
+    }
+    
     private func storeRecentAudio(_ buffer: AVAudioPCMBuffer, at startFramePosition: AVAudioFramePosition) {
         guard let copiedBuffer = copyAudioBuffer(buffer) else { return }
         let endFramePosition = startFramePosition + AVAudioFramePosition(buffer.frameLength)
         let maxStoredFrames = AVAudioFramePosition(detectionRecordingDuration * buffer.format.sampleRate)
+        let audioLevel = rmsLevel(for: copiedBuffer)
         var completedDetection: SoundDetection?
         
         audioBufferLock.lock()
@@ -203,11 +239,32 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
                 try recording.audioFile.write(from: copiedBuffer)
                 recording.writtenFrameCount += AVAudioFramePosition(copiedBuffer.frameLength)
                 
+                if recording.startLevel == nil {
+                    recording.startLevel = audioLevel
+                }
+                recording.peakLevel = max(recording.peakLevel, audioLevel)
+                
+                if !recording.louderLogged,
+                   let startLevel = recording.startLevel,
+                   audioLevel > startLevel * 1.8,
+                   audioLevel > 0.02 {
+                    recording.timeline.append(TimelineNode(exactTime: Date(), label: contextLouderLabel(for: recording.label)))
+                    recording.louderLogged = true
+                }
+                
                 if recording.writtenFrameCount >= recording.targetFrameCount {
+                    var timeline = recording.timeline
+                    if !recording.quietingLogged {
+                        timeline.append(TimelineNode(exactTime: recording.lastActiveAt, label: contextQuietingLabel(for: recording.label)))
+                    }
+                    timeline.append(TimelineNode(exactTime: recording.lastActiveAt, label: "Silence"))
+                    
                     completedDetection = SoundDetection(
                         name: recording.label,
                         confidence: recording.confidence,
                         timestamp: recording.detectedAt,
+                        endedAt: recording.lastActiveAt,
+                        timeline: timeline,
                         audioFileURL: recording.fileURL
                     )
                     pendingDetectionRecording = nil
@@ -251,6 +308,56 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         }
         
         return copiedBuffer
+    }
+    
+    private func rmsLevel(for buffer: AVAudioPCMBuffer) -> Float {
+        guard let channelData = buffer.floatChannelData else { return 0 }
+        let frameLength = Int(buffer.frameLength)
+        guard frameLength > 0 else { return 0 }
+        
+        var sum: Float = 0
+        for frame in 0..<frameLength {
+            let sample = channelData[0][frame]
+            sum += sample * sample
+        }
+        return sqrt(sum / Float(frameLength))
+    }
+    
+    private func contextStartLabel(for label: String) -> String {
+        let normalized = label.lowercased()
+        if normalized.contains("dog") { return "a dog barking nearby" }
+        if normalized.contains("alarm") || normalized.contains("siren") { return "an alarm or siren starting nearby" }
+        if normalized.contains("horn") { return "a car horn sounding nearby" }
+        if normalized.contains("glass") { return "a sharp glass-breaking sound" }
+        if normalized.contains("door") || normalized.contains("knock") { return "a door or knocking sound" }
+        if normalized.contains("baby") { return "a baby crying nearby" }
+        return "\(formattedSoundName(label)) nearby"
+    }
+    
+    private func contextQuietingLabel(for label: String) -> String {
+        let normalized = label.lowercased()
+        if normalized.contains("dog") { return "the barking started to fade" }
+        if normalized.contains("alarm") || normalized.contains("siren") { return "the alarm began to quiet down" }
+        if normalized.contains("horn") { return "the horn faded out" }
+        if normalized.contains("baby") { return "the crying softened" }
+        return "the \(formattedSoundName(label).lowercased()) started to fade"
+    }
+    
+    private func contextLouderLabel(for label: String) -> String {
+        let normalized = label.lowercased()
+        if normalized.contains("alarm") || normalized.contains("siren") { return "the alarm sounded like it was getting closer" }
+        if normalized.contains("car") || normalized.contains("vehicle") { return "the vehicle sound seemed to get closer" }
+        return "the \(formattedSoundName(label).lowercased()) got louder"
+    }
+    
+    private func formattedSoundName(_ name: String) -> String {
+        name
+            .replacingOccurrences(of: "_", with: " ")
+            .split(separator: " ")
+            .map { word in
+                word.prefix(1).uppercased() + word.dropFirst().lowercased()
+            }
+            .joined(separator: " ")
     }
     
     private func sanitizedFileName(_ label: String) -> String {

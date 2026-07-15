@@ -175,15 +175,17 @@ struct HomeView: View {
     }
     
     private func triggerAlert(for detection: SoundDetection) {
-        currentAlertSound = detection.name
+        let displayName = formattedSoundName(detection.name)
+        currentAlertSound = displayName
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             showAlert = true
         }
         
-        let timeline = [TimelineNode(exactTime: detection.timestamp, label: detection.name)]
         let newEvent = historyManager.logEvent(
-            name: detection.name,
-            timeline: timeline,
+            name: displayName,
+            timestamp: detection.timestamp,
+            endedAt: detection.endedAt,
+            timeline: detection.timeline,
             audioFileURL: detection.audioFileURL
         )
         self.pendingEvent = newEvent
@@ -211,12 +213,28 @@ struct HomeView: View {
     private func normalizedSoundName(_ name: String) -> String {
         name.lowercased().filter { $0.isLetter || $0.isNumber }
     }
+    
+    private func formattedSoundName(_ name: String) -> String {
+        name
+            .replacingOccurrences(of: "_", with: " ")
+            .split(separator: " ")
+            .map { word in
+                word.prefix(1).uppercased() + word.dropFirst().lowercased()
+            }
+            .joined(separator: " ")
+    }
 }
 
 struct AlertPopupView: View {
     var soundName: String
     var onDismiss: () -> Void
     var onViewDetails: () -> Void
+    
+    @StateObject private var narrator = EventNarrator()
+    
+    private var warningText: String {
+        "Aura detected \(soundName). Please check your surroundings."
+    }
     
     var body: some View {
         VStack(spacing: 16) {
@@ -259,7 +277,7 @@ struct AlertPopupView: View {
                 }
                 
                 Button(action: onViewDetails) {
-                    Text("View details")
+                    Text("View Details")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
@@ -270,9 +288,27 @@ struct AlertPopupView: View {
                                 .stroke(Color.gray.opacity(0.4), lineWidth: 1)
                         )
                 }
+                
+                Button {
+                    narrator.toggleReading(warningText)
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: narrator.isSpeaking ? "stop.fill" : "speaker.wave.2.fill")
+                        Text(narrator.isSpeaking ? "Stop Reading" : "Read Warning")
+                    }
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color(red: 0.42, green: 0.29, blue: 0.72))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                }
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
+        }
+        .onDisappear {
+            narrator.stopReading()
         }
         .frame(width: 320)
         .background(Color.white)
