@@ -25,18 +25,30 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         let endFramePosition: AVAudioFramePosition
     }
     
+    private struct PendingDetectionRecording {
+        let label: String
+        let confidence: Double
+        let detectedAt: Date
+        let fileURL: URL
+        let audioFile: AVAudioFile
+        let targetFrameCount: AVAudioFramePosition
+        var writtenFrameCount: AVAudioFramePosition
+    }
+    
     private let audioEngine = AVAudioEngine()
     private let audioBufferLock = NSLock()
     private var streamAnalyzer: SNAudioStreamAnalyzer?
+    private var recordingFormat: AVAudioFormat?
     private var recentAudioBuffers: [BufferedAudio] = []
+    private var pendingDetectionRecording: PendingDetectionRecording?
     private var currentCandidate: String?
     private var candidateCount = 0
     private var lastDetectionTimes: [String: Date] = [:]
     
-    private let recentAudioDuration: TimeInterval = 8
-    private let minimumConfidence = 0.90
-    private let requiredConsecutiveMatches = 3
-    private let detectionCooldown: TimeInterval = 8
+    private let detectionRecordingDuration: TimeInterval = 8
+    private let minimumConfidence = 0.75
+    private let requiredConsecutiveMatches = 1
+    private let detectionCooldown: TimeInterval = 6
     
     @Published var detectedSound: String = "Waiting for sound..."
     @Published var confidence: Double = 0.0
@@ -60,18 +72,19 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             try audioSession.setActive(true)
             
             let inputNode = audioEngine.inputNode
-            let recordingFormat = inputNode.outputFormat(forBus: 0)
+            let inputFormat = inputNode.outputFormat(forBus: 0)
+            recordingFormat = inputFormat
             
-            streamAnalyzer = SNAudioStreamAnalyzer(format: recordingFormat)
+            streamAnalyzer = SNAudioStreamAnalyzer(format: inputFormat)
             try streamAnalyzer?.add(request, withObserver: self)
             
-            inputNode.installTap(onBus: 0, bufferSize: 8192, format: recordingFormat) { [weak self] buffer, time in
+            inputNode.installTap(onBus: 0, bufferSize: 8192, format: inputFormat) { [weak self] buffer, time in
                 self?.storeRecentAudio(buffer, at: time.sampleTime)
                 self?.streamAnalyzer?.analyze(buffer, atAudioFramePosition: time.sampleTime)
             }
             
             resetDetectionState()
-            clearRecentAudio()
+            clearAudioState()
             try audioEngine.start()
             print("AI is now actively listening!")
             
@@ -85,7 +98,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         audioEngine.inputNode.removeTap(onBus: 0)
         streamAnalyzer = nil
         resetDetectionState()
-        clearRecentAudio()
+        clearAudioState()
         print("AI stopped listening.")
     }
     
@@ -113,20 +126,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         guard canEmitDetection(for: label) else { return }
         
         lastDetectionTimes[label] = Date()
-        let detectionTime = Date()
-        let audioFileURL = saveRecentAudioClip(for: label, detectedAt: detectionTime)
-        
-        DispatchQueue.main.async {
-            self.detectedSound = label
-            self.confidence = confidence
-            self.latestDetection = SoundDetection(
-                name: label,
-                confidence: confidence,
-                timestamp: detectionTime,
-                audioFileURL: audioFileURL
-            )
-            print("AI Heard: \(label) at \(Int(confidence * 100))%")
-        }
+        startDetectionRecording(label: label, confidence: confidence, detectedAt: Date())
     }
     
     func request(_ request: SNRequest, didFailWithError error: Error) {
@@ -139,6 +139,11 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     }
     
     private func canEmitDetection(for label: String) -> Bool {
+        audioBufferLock.lock()
+        let alreadyRecording = pendingDetectionRecording != nil
+        audioBufferLock.unlock()
+        
+        if alreadyRecording { return false }
         guard let lastDetectionTime = lastDetectionTimes[label] else { return true }
         return Date().timeIntervalSince(lastDetectionTime) >= detectionCooldown
     }
@@ -152,15 +157,82 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             || normalized == "other"
     }
     
+    private func startDetectionRecording(label: String, confidence: Double, detectedAt: Date) {
+        guard let format = recordingFormat else { return }
+        
+        do {
+            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let fileName = "Aura_Detection_\(sanitizedFileName(label))_\(Int(detectedAt.timeIntervalSince1970)).caf"
+            let fileURL = documentsDirectory.appendingPathComponent(fileName)
+            let audioFile = try AVAudioFile(forWriting: fileURL, settings: format.settings)
+            let targetFrameCount = AVAudioFramePosition(detectionRecordingDuration * format.sampleRate)
+            var recording = PendingDetectionRecording(
+                label: label,
+                confidence: confidence,
+                detectedAt: detectedAt,
+                fileURL: fileURL,
+                audioFile: audioFile,
+                targetFrameCount: targetFrameCount,
+                writtenFrameCount: 0
+            )
+            
+            audioBufferLock.lock()
+            for storedAudio in recentAudioBuffers {
+                try audioFile.write(from: storedAudio.buffer)
+                recording.writtenFrameCount += AVAudioFramePosition(storedAudio.buffer.frameLength)
+            }
+            pendingDetectionRecording = recording
+            audioBufferLock.unlock()
+        } catch {
+            print("Failed to start detection recording: \(error.localizedDescription)")
+        }
+    }
+    
     private func storeRecentAudio(_ buffer: AVAudioPCMBuffer, at startFramePosition: AVAudioFramePosition) {
         guard let copiedBuffer = copyAudioBuffer(buffer) else { return }
         let endFramePosition = startFramePosition + AVAudioFramePosition(buffer.frameLength)
-        let maxStoredFrames = AVAudioFramePosition(recentAudioDuration * buffer.format.sampleRate)
+        let maxStoredFrames = AVAudioFramePosition(detectionRecordingDuration * buffer.format.sampleRate)
+        var completedDetection: SoundDetection?
         
         audioBufferLock.lock()
         recentAudioBuffers.append(BufferedAudio(buffer: copiedBuffer, endFramePosition: endFramePosition))
         recentAudioBuffers.removeAll { endFramePosition - $0.endFramePosition > maxStoredFrames }
+        
+        if var recording = pendingDetectionRecording {
+            do {
+                try recording.audioFile.write(from: copiedBuffer)
+                recording.writtenFrameCount += AVAudioFramePosition(copiedBuffer.frameLength)
+                
+                if recording.writtenFrameCount >= recording.targetFrameCount {
+                    completedDetection = SoundDetection(
+                        name: recording.label,
+                        confidence: recording.confidence,
+                        timestamp: recording.detectedAt,
+                        audioFileURL: recording.fileURL
+                    )
+                    pendingDetectionRecording = nil
+                } else {
+                    pendingDetectionRecording = recording
+                }
+            } catch {
+                print("Failed to write detection audio: \(error.localizedDescription)")
+                pendingDetectionRecording = nil
+            }
+        }
         audioBufferLock.unlock()
+        
+        if let completedDetection {
+            publish(completedDetection)
+        }
+    }
+    
+    private func publish(_ detection: SoundDetection) {
+        DispatchQueue.main.async {
+            self.detectedSound = detection.name
+            self.confidence = detection.confidence
+            self.latestDetection = detection
+            print("AI Heard: \(detection.name) at \(Int(detection.confidence * 100))%")
+        }
     }
     
     private func copyAudioBuffer(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
@@ -181,30 +253,6 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         return copiedBuffer
     }
     
-    private func saveRecentAudioClip(for label: String, detectedAt date: Date) -> URL? {
-        audioBufferLock.lock()
-        let buffers = recentAudioBuffers.map(\.buffer)
-        audioBufferLock.unlock()
-        
-        guard let firstBuffer = buffers.first else { return nil }
-        
-        do {
-            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fileName = "Aura_Detection_\(sanitizedFileName(label))_\(Int(date.timeIntervalSince1970)).caf"
-            let fileURL = documentsDirectory.appendingPathComponent(fileName)
-            let audioFile = try AVAudioFile(forWriting: fileURL, settings: firstBuffer.format.settings)
-            
-            for buffer in buffers {
-                try audioFile.write(from: buffer)
-            }
-            
-            return fileURL
-        } catch {
-            print("Failed to save detection audio: \(error.localizedDescription)")
-            return nil
-        }
-    }
-    
     private func sanitizedFileName(_ label: String) -> String {
         let allowedCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
         return label
@@ -213,9 +261,10 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             .joined()
     }
     
-    private func clearRecentAudio() {
+    private func clearAudioState() {
         audioBufferLock.lock()
         recentAudioBuffers.removeAll()
+        pendingDetectionRecording = nil
         audioBufferLock.unlock()
     }
 }

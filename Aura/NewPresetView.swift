@@ -15,6 +15,10 @@ struct NewPresetView: View {
     @State private var presetName = ""
     @State private var selectedSounds = Set<String>()
     
+    private var sortedSounds: [Sound] {
+        soundManager.sounds.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
@@ -57,7 +61,7 @@ struct NewPresetView: View {
                             .foregroundColor(.gray)
                         
                         VStack(spacing: 12) {
-                            ForEach(soundManager.sounds) { sound in
+                            ForEach(sortedSounds) { sound in
                                 HStack {
                                     Text(sound.name)
                                         .font(.system(size: 16, weight: .semibold))

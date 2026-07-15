@@ -44,23 +44,6 @@ struct DetectedEvent: Identifiable, Hashable {
 class HistoryManager: ObservableObject {
     @Published var events: [DetectedEvent] = []
     
-    init() {
-        let eventTime = Date().addingTimeInterval(-120)
-        
-        events = [
-            DetectedEvent(
-                name: "Glass Breaking",
-                timestamp: eventTime,
-                timeline: [
-                    TimelineNode(exactTime: eventTime, label: "Glass Breaking"),
-                    TimelineNode(exactTime: eventTime.addingTimeInterval(3), label: "Silence"),
-                    TimelineNode(exactTime: eventTime.addingTimeInterval(5), label: "Glass Breaking"),
-                    TimelineNode(exactTime: eventTime.addingTimeInterval(8), label: "Silence")
-                ]
-            )
-        ]
-    }
-    
     func logEvent(name: String, timeline: [TimelineNode], audioFileURL: URL? = nil) -> DetectedEvent {
         let newEvent = DetectedEvent(name: name, timestamp: Date(), timeline: timeline, audioFileURL: audioFileURL)
         events.insert(newEvent, at: 0)

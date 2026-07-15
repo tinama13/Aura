@@ -86,7 +86,17 @@ class PresetManager: ObservableObject {
     }
     
     func createNewPreset(title: String, icon: String, sounds: Set<String>) {
-        let newPreset = Preset(title: title, iconName: icon, defaultSounds: Array(sounds))
-        presets.append(newPreset)
+        let sortedSounds = sounds.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+        let newPreset = Preset(title: title, iconName: icon, defaultSounds: sortedSounds, isFavorite: true)
+        presets.insert(newPreset, at: 0)
+        activePresetID = newPreset.id
+        keepFirstFourFavorites()
+    }
+    
+    private func keepFirstFourFavorites() {
+        let favoriteIndices = presets.indices.filter { presets[$0].isFavorite }
+        for index in favoriteIndices.dropFirst(4) {
+            presets[index].isFavorite = false
+        }
     }
 }

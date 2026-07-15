@@ -165,7 +165,7 @@ struct HomeView: View {
             requestNotificationPermission()
         }
         .onChange(of: recognizer.latestDetection) { oldValue, newValue in
-            guard let detection = newValue, isEnabledInActivePreset(detection.name) else { return }
+            guard let detection = newValue else { return }
             triggerAlert(for: detection)
         }
     }
