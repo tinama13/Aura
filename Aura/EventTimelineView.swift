@@ -45,7 +45,7 @@ struct EventTimelineView: View {
                 } label: {
                     HStack {
                         Image(systemName: audioPlayer.isPlaying ? "stop.fill" : "play.fill")
-                        Text(audioPlayer.isPlaying ? "Stop Recording" : "Play Recording")
+                        Text(audioPlayer.isPlaying ? "Stop Recording" : "Play Detection Recording")
                     }
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(Color(red: 0.204, green: 0.678, blue: 0.914))

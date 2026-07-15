@@ -61,8 +61,8 @@ class HistoryManager: ObservableObject {
         ]
     }
     
-    func logEvent(name: String, timeline: [TimelineNode]) -> DetectedEvent {
-        let newEvent = DetectedEvent(name: name, timestamp: Date(), timeline: timeline)
+    func logEvent(name: String, timeline: [TimelineNode], audioFileURL: URL? = nil) -> DetectedEvent {
+        let newEvent = DetectedEvent(name: name, timestamp: Date(), timeline: timeline, audioFileURL: audioFileURL)
         events.insert(newEvent, at: 0)
         return newEvent
     }

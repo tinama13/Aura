@@ -164,10 +164,9 @@ struct HomeView: View {
         .onAppear {
             requestNotificationPermission()
         }
-        .onChange(of: recognizer.detectedSound) { oldValue, newValue in
-            if newValue != "Waiting for sound..." && newValue != "" && newValue != "silence" {
-                triggerAlert(for: newValue)
-            }
+        .onChange(of: recognizer.latestDetection) { oldValue, newValue in
+            guard let detection = newValue, isEnabledInActivePreset(detection.name) else { return }
+            triggerAlert(for: detection)
         }
     }
     
@@ -175,21 +174,42 @@ struct HomeView: View {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in }
     }
     
-    private func triggerAlert(for sound: String) {
-        currentAlertSound = sound
+    private func triggerAlert(for detection: SoundDetection) {
+        currentAlertSound = detection.name
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             showAlert = true
         }
         
-        let newEvent = historyManager.logEvent(name: sound, timeline: [])
+        let timeline = [TimelineNode(exactTime: detection.timestamp, label: detection.name)]
+        let newEvent = historyManager.logEvent(
+            name: detection.name,
+            timeline: timeline,
+            audioFileURL: detection.audioFileURL
+        )
         self.pendingEvent = newEvent
         
         let content = UNMutableNotificationContent()
         content.title = "Aura Alert"
-        content.body = "\(sound) Detected!"
+        content.body = "\(detection.name) Detected!"
         content.sound = UNNotificationSound.default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
+    }
+    
+    private func isEnabledInActivePreset(_ detectedSound: String) -> Bool {
+        let activeSounds = presetManager.selectedSounds[presetManager.activePresetID] ?? Set(presetManager.activePreset.defaultSounds)
+        let normalizedDetection = normalizedSoundName(detectedSound)
+        
+        return activeSounds.contains { activeSound in
+            let normalizedActiveSound = normalizedSoundName(activeSound)
+            return normalizedActiveSound == normalizedDetection
+                || normalizedActiveSound.contains(normalizedDetection)
+                || normalizedDetection.contains(normalizedActiveSound)
+        }
+    }
+    
+    private func normalizedSoundName(_ name: String) -> String {
+        name.lowercased().filter { $0.isLetter || $0.isNumber }
     }
 }
 
