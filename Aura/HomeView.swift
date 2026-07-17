@@ -1,6 +1,8 @@
 import SwiftUI
 import UserNotifications
 import Combine
+import AudioToolbox
+import UIKit
 
 struct HomeView: View {
     // TEMPORARY (dev only): lets the reset button below replay onboarding.
@@ -178,10 +180,9 @@ struct HomeView: View {
         .onAppear {
             requestNotificationPermission()
         }
-        .onChange(of: recognizer.detectedSound) { oldValue, newValue in
-            if newValue != "Waiting for sound..." && newValue != "" && newValue != "silence" {
-                triggerAlert(for: newValue)
-            }
+        .onChange(of: recognizer.latestDetection) { oldValue, newValue in
+            guard let detection = newValue else { return }
+            triggerAlert(for: detection)
         }
     }
     
@@ -189,21 +190,73 @@ struct HomeView: View {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in }
     }
     
-    private func triggerAlert(for sound: String) {
-        currentAlertSound = sound
+    private func triggerAlert(for detection: SoundDetection) {
+        let displayName = formattedSoundName(detection.name)
+        currentAlertSound = displayName
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             showAlert = true
         }
         
-        let newEvent = historyManager.logEvent(name: sound, timeline: [])
+        let newEvent = historyManager.logEvent(
+            name: displayName,
+            timestamp: detection.timestamp,
+            endedAt: detection.endedAt,
+            timeline: detection.timeline,
+            audioFileURL: detection.audioFileURL
+        )
         self.pendingEvent = newEvent
         
+        if isAlarmSound(displayName) {
+            triggerAlarmVibration()
+        }
+        
         let content = UNMutableNotificationContent()
-        content.title = "Aura Alert"
-        content.body = "\(sound) Detected!"
+        content.title = "Aura"
+        content.body = displayName
         content.sound = UNNotificationSound.default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
+    }
+    
+    private func isAlarmSound(_ soundName: String) -> Bool {
+        let normalizedName = soundName.lowercased()
+        return normalizedName.contains("alarm")
+            || normalizedName.contains("siren")
+            || normalizedName.contains("smoke")
+            || normalizedName.contains("emergency")
+    }
+    
+    private func triggerAlarmVibration() {
+        let feedbackGenerator = UINotificationFeedbackGenerator()
+        feedbackGenerator.prepare()
+        feedbackGenerator.notificationOccurred(.warning)
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+    }
+    
+    private func isEnabledInActivePreset(_ detectedSound: String) -> Bool {
+        let activeSounds = presetManager.selectedSounds[presetManager.activePresetID] ?? Set(presetManager.activePreset.defaultSounds)
+        let normalizedDetection = normalizedSoundName(detectedSound)
+        
+        return activeSounds.contains { activeSound in
+            let normalizedActiveSound = normalizedSoundName(activeSound)
+            return normalizedActiveSound == normalizedDetection
+                || normalizedActiveSound.contains(normalizedDetection)
+                || normalizedDetection.contains(normalizedActiveSound)
+        }
+    }
+    
+    private func normalizedSoundName(_ name: String) -> String {
+        name.lowercased().filter { $0.isLetter || $0.isNumber }
+    }
+    
+    private func formattedSoundName(_ name: String) -> String {
+        name
+            .replacingOccurrences(of: "_", with: " ")
+            .split(separator: " ")
+            .map { word in
+                word.prefix(1).uppercased() + word.dropFirst().lowercased()
+            }
+            .joined(separator: " ")
     }
 }
 
@@ -211,6 +264,12 @@ struct AlertPopupView: View {
     var soundName: String
     var onDismiss: () -> Void
     var onViewDetails: () -> Void
+    
+    @StateObject private var narrator = EventNarrator()
+    
+    private var warningText: String {
+        "Aura detected \(soundName). Please check your surroundings."
+    }
     
     var body: some View {
         VStack(spacing: 16) {
@@ -253,7 +312,7 @@ struct AlertPopupView: View {
                 }
                 
                 Button(action: onViewDetails) {
-                    Text("View details")
+                    Text("View Details")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
@@ -264,9 +323,27 @@ struct AlertPopupView: View {
                                 .stroke(Color.gray.opacity(0.4), lineWidth: 1)
                         )
                 }
+                
+                Button {
+                    narrator.toggleReading(warningText)
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: narrator.isSpeaking ? "stop.fill" : "speaker.wave.2.fill")
+                        Text(narrator.isSpeaking ? "Stop Reading" : "Read Warning")
+                    }
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color(red: 0.42, green: 0.29, blue: 0.72))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                }
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
+        }
+        .onDisappear {
+            narrator.stopReading()
         }
         .frame(width: 320)
         .background(Color.white)
