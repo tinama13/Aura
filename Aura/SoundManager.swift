@@ -13,6 +13,7 @@ struct Sound: Identifiable {
     let id = UUID()
     let name: String
     var isUserCreated: Bool = false
+    var notes: String = ""
 }
 
 class SoundManager: ObservableObject {
@@ -51,5 +52,11 @@ class SoundManager: ObservableObject {
     
     func deleteSound(name: String) {
         sounds.removeAll { $0.name == name }
+    }
+
+    func updateNotes(for name: String, notes: String) {
+        if let index = sounds.firstIndex(where: { $0.name == name }) {
+            sounds[index].notes = notes
+        }
     }
 }

@@ -3,6 +3,10 @@ import UserNotifications
 import Combine
 
 struct HomeView: View {
+    // TEMPORARY (dev only): lets the reset button below replay onboarding.
+    // Remove together with the button before shipping.
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = true
+
     @State private var isListening = false
     @State private var isPulsing = false
     
@@ -26,6 +30,16 @@ struct HomeView: View {
                             .font(.custom("MarkerFelt-Thin", size: 34))
                             .foregroundStyle(.black)
                         Spacer()
+
+                        // TEMPORARY (dev only): replays onboarding. Remove before shipping.
+                        Button {
+                            hasCompletedOnboarding = false
+                        } label: {
+                            Image(systemName: "arrow.counterclockwise.circle")
+                                .font(.system(size: 22))
+                                .foregroundColor(.gray)
+                        }
+                        .buttonStyle(.plain)
                     }
                     .padding(.top, 34)
                     .padding(.horizontal, 26)

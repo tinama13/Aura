@@ -14,6 +14,11 @@ struct SoundDetailView: View {
     
     @EnvironmentObject var soundManager: SoundManager
     
+    private func saveNote() {
+        soundManager.updateNotes(for: soundName, notes: notes)
+        dismiss()
+    }
+    
     var isCustomSound: Bool {
         if let sound = soundManager.sounds.first(where: { $0.name == soundName }) {
             return sound.isUserCreated
@@ -67,24 +72,72 @@ struct SoundDetailView: View {
             
             Spacer()
             
-            if isCustomSound {
-                Button(action: {
-                    soundManager.deleteSound(name: soundName)
-                    dismiss()
-                }) {
-                    Text("Delete Sound")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Color.red)
-                        .cornerRadius(12)
+//            Button("Save Note") {
+//                /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/ /*@END_MENU_TOKEN@*/
+//            }
+            Group{
+                if isCustomSound {
+                    HStack(spacing: 12) {
+                        Button(action: saveNote){
+                            Text("Save Note").font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Color(red: 0.204, green: 0.678, blue: 0.914))
+                                .cornerRadius(12)
+                        }
+                        Button(action: {
+                                        soundManager.deleteSound(name: soundName)
+                                        dismiss()
+                                    }) {
+                                        Text("Delete Sound")
+                                            .font(.system(size: 16, weight: .bold))
+                                            .foregroundColor(.white)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 16)
+                                            .background(Color.red)
+                                            .cornerRadius(12)
+                                    }
+                                }
+                        
+                    }
+                else {
+                        Button(action: saveNote) {
+                            Text("Save Note")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(Color(red: 0.204, green: 0.678, blue: 0.914))
+                                .cornerRadius(12)
+                        }
+                    }
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 20)
             }
-        }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 20)
+//            if isCustomSound {
+//                Button(action: {
+//                    soundManager.deleteSound(name: soundName)
+//                    dismiss()
+//                }) {
+//                    Text("Delete Sound")
+//                        .font(.system(size: 16, weight: .bold))
+//                        .foregroundColor(.white)
+//                        .frame(maxWidth: .infinity)
+//                        .padding(.vertical, 16)
+//                        .background(Color.red)
+//                        .cornerRadius(12)
+//                }
+//                .padding(.horizontal, 24)
+//                .padding(.bottom, 20)
+//            }
+//        }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            // Show any note that was saved for this sound before
+            notes = soundManager.sounds.first(where: { $0.name == soundName })?.notes ?? ""
+        }
     }
 }
 
