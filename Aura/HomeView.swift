@@ -1,6 +1,8 @@
 import SwiftUI
 import UserNotifications
 import Combine
+import AudioToolbox
+import UIKit
 
 struct HomeView: View {
     @State private var isListening = false
@@ -190,12 +192,31 @@ struct HomeView: View {
         )
         self.pendingEvent = newEvent
         
+        if isAlarmSound(displayName) {
+            triggerAlarmVibration()
+        }
+        
         let content = UNMutableNotificationContent()
-        content.title = "Aura Alert"
-        content.body = "\(detection.name) Detected!"
+        content.title = "Aura"
+        content.body = displayName
         content.sound = UNNotificationSound.default
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
+    }
+    
+    private func isAlarmSound(_ soundName: String) -> Bool {
+        let normalizedName = soundName.lowercased()
+        return normalizedName.contains("alarm")
+            || normalizedName.contains("siren")
+            || normalizedName.contains("smoke")
+            || normalizedName.contains("emergency")
+    }
+    
+    private func triggerAlarmVibration() {
+        let feedbackGenerator = UINotificationFeedbackGenerator()
+        feedbackGenerator.prepare()
+        feedbackGenerator.notificationOccurred(.warning)
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
     }
     
     private func isEnabledInActivePreset(_ detectedSound: String) -> Bool {
