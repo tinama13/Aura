@@ -164,8 +164,20 @@ struct HomeView: View {
                         soundName: currentAlertSound,
                         onDismiss: { withAnimation { showAlert = false } },
                         onViewDetails: {
+                            if isListening {
+                                isListening = false
+                                isPulsing = false
+                                recognizer.stopListening()
+                            }
                             self.eventToNavigateTo = self.pendingEvent
                             withAnimation { showAlert = false }
+                        },
+                        onReadWarning: {
+                            if isListening {
+                                isListening = false
+                                isPulsing = false
+                                recognizer.stopListening()
+                            }
                         }
                     )
                     .transition(.scale.combined(with: .opacity))
@@ -264,6 +276,7 @@ struct AlertPopupView: View {
     var soundName: String
     var onDismiss: () -> Void
     var onViewDetails: () -> Void
+    var onReadWarning: () -> Void
     
     @StateObject private var narrator = EventNarrator()
     
@@ -325,6 +338,7 @@ struct AlertPopupView: View {
                 }
                 
                 Button {
+                    onReadWarning()
                     narrator.toggleReading(warningText)
                 } label: {
                     HStack(spacing: 8) {

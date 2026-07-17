@@ -131,32 +131,94 @@ struct EventTimelineView: View {
 }
 
 class EventAudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
-    var audioPlayer: AVAudioPlayer?
+    private let audioEngine = AVAudioEngine()
+    private let playerNode = AVAudioPlayerNode()
+    private var isPlayerNodeAttached = false
+    private var audioPlayer: AVAudioPlayer?
     @Published var isPlaying = false
     
     func togglePlayback(url: URL?) {
-        guard let url = url else { return }
+        guard let url = resolvedAudioURL(from: url) else {
+            print("Detection recording file was not found.")
+            return
+        }
         
         if isPlaying {
             stopPlayback()
         } else {
             do {
-                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.allowBluetoothA2DP])
                 try AVAudioSession.sharedInstance().setActive(true)
                 
-                audioPlayer = try AVAudioPlayer(contentsOf: url)
-                audioPlayer?.delegate = self
-                audioPlayer?.play()
+                if playWithAVAudioPlayer(url: url) {
+                    return
+                }
+                
+                let audioFile = try AVAudioFile(forReading: url)
+                if !isPlayerNodeAttached {
+                    audioEngine.attach(playerNode)
+                    isPlayerNodeAttached = true
+                }
+                
+                audioEngine.disconnectNodeOutput(playerNode)
+                audioEngine.connect(playerNode, to: audioEngine.mainMixerNode, format: audioFile.processingFormat)
+                playerNode.scheduleFile(audioFile, at: nil) { [weak self] in
+                    DispatchQueue.main.async {
+                        self?.isPlaying = false
+                        self?.audioEngine.stop()
+                    }
+                }
+                
+                if !audioEngine.isRunning {
+                    try audioEngine.start()
+                }
+                
+                playerNode.play()
                 isPlaying = true
             } catch {
                 print("Failed to play audio: \(error.localizedDescription)")
+                isPlaying = false
             }
         }
     }
     
     func stopPlayback() {
         audioPlayer?.stop()
+        audioPlayer = nil
+        playerNode.stop()
+        audioEngine.stop()
         isPlaying = false
+    }
+    
+    private func playWithAVAudioPlayer(url: URL) -> Bool {
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.delegate = self
+            audioPlayer?.prepareToPlay()
+            audioPlayer?.play()
+            isPlaying = true
+            return true
+        } catch {
+            print("AVAudioPlayer could not play detection audio: \(error.localizedDescription)")
+            audioPlayer = nil
+            return false
+        }
+    }
+    
+    private func resolvedAudioURL(from url: URL?) -> URL? {
+        guard let url else { return nil }
+        
+        if FileManager.default.fileExists(atPath: url.path) {
+            return url
+        }
+        
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let documentsURL = documentsDirectory.appendingPathComponent(url.lastPathComponent)
+        if FileManager.default.fileExists(atPath: documentsURL.path) {
+            return documentsURL
+        }
+        
+        return nil
     }
     
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
@@ -164,10 +226,15 @@ class EventAudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
 }
 
-class EventNarrator: ObservableObject {
+@MainActor
+class EventNarrator: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     private let synthesizer = AVSpeechSynthesizer()
-    private var readTimer: Timer?
     @Published var isSpeaking = false
+    
+    override init() {
+        super.init()
+        synthesizer.delegate = self
+    }
     
     func toggleReading(_ text: String) {
         if isSpeaking {
@@ -178,23 +245,34 @@ class EventNarrator: ObservableObject {
     }
     
     func stopReading() {
-        readTimer?.invalidate()
-        readTimer = nil
         synthesizer.stopSpeaking(at: .immediate)
         isSpeaking = false
     }
     
     private func read(_ text: String) {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers, .allowBluetoothA2DP])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to set up speech audio session: \(error.localizedDescription)")
+        }
+        
         let utterance = AVSpeechUtterance(string: text)
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         synthesizer.speak(utterance)
         isSpeaking = true
-        
-        readTimer?.invalidate()
-        let estimatedDuration = max(2.0, Double(text.split(separator: " ").count) * 0.38)
-        readTimer = Timer.scheduledTimer(withTimeInterval: estimatedDuration, repeats: false) { [weak self] _ in
-            self?.isSpeaking = false
+    }
+    
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        Task { @MainActor in
+            isSpeaking = false
+        }
+    }
+    
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        Task { @MainActor in
+            isSpeaking = false
         }
     }
 }

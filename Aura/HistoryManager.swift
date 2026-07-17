@@ -8,8 +8,8 @@
 import SwiftUI
 import Combine
 
-struct TimelineNode: Identifiable, Hashable {
-    let id = UUID()
+struct TimelineNode: Identifiable, Hashable, Codable {
+    var id = UUID()
     let exactTime: Date
     let label: String
     
@@ -24,8 +24,8 @@ struct TimelineNode: Identifiable, Hashable {
     }
 }
 
-struct DetectedEvent: Identifiable, Hashable {
-    let id = UUID()
+struct DetectedEvent: Identifiable, Hashable, Codable {
+    var id = UUID()
     let name: String
     let timestamp: Date
     let endedAt: Date?
@@ -68,11 +68,36 @@ struct DetectedEvent: Identifiable, Hashable {
 }
 
 class HistoryManager: ObservableObject {
-    @Published var events: [DetectedEvent] = []
+    private let savedEventsKey = "savedDetectedEvents"
+    
+    @Published var events: [DetectedEvent] = [] {
+        didSet {
+            saveEvents()
+        }
+    }
+    
+    init() {
+        loadEvents()
+    }
     
     func logEvent(name: String, timestamp: Date = Date(), endedAt: Date? = nil, timeline: [TimelineNode], audioFileURL: URL? = nil) -> DetectedEvent {
         let newEvent = DetectedEvent(name: name, timestamp: timestamp, endedAt: endedAt, timeline: timeline, audioFileURL: audioFileURL)
         events.insert(newEvent, at: 0)
         return newEvent
+    }
+    
+    private func loadEvents() {
+        guard let data = UserDefaults.standard.data(forKey: savedEventsKey),
+              let savedEvents = try? JSONDecoder().decode([DetectedEvent].self, from: data) else {
+            events = []
+            return
+        }
+        
+        events = savedEvents
+    }
+    
+    private func saveEvents() {
+        guard let data = try? JSONEncoder().encode(events) else { return }
+        UserDefaults.standard.set(data, forKey: savedEventsKey)
     }
 }

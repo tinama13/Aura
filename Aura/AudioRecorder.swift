@@ -32,7 +32,7 @@ class AudioRecorder: NSObject, ObservableObject, AVAudioPlayerDelegate {
         let audioSession = AVAudioSession.sharedInstance()
         
         do {
-            try audioSession.setCategory(.playAndRecord, mode: .default)
+            try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothHFP])
             try audioSession.setActive(true)
             
             let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -64,7 +64,7 @@ class AudioRecorder: NSObject, ObservableObject, AVAudioPlayerDelegate {
         let audioFilename = documentPath.appendingPathComponent("\(fileName).m4a")
         
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.allowBluetoothA2DP])
             try AVAudioSession.sharedInstance().setActive(true)
             
             audioPlayer = try AVAudioPlayer(contentsOf: audioFilename)

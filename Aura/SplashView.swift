@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct SplashView: View {
-    @State private var isRotating = false
     var body: some View {
-        Image("Icon").rotationEffect(.degrees(isRotating ? 360 : 0)).animation(.linear(duration: 1.2).repeatForever(autoreverses: false), value: isRotating).onAppear{
-            isRotating = true
-        }.frame(maxWidth: .infinity, maxHeight: .infinity)
-        
+        Image("SplashIcon")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 320, height: 320)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.white)
     }
 }
 

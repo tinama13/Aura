@@ -9,15 +9,17 @@ import Foundation
 import SwiftUI
 import Combine
 
-struct Sound: Identifiable {
-    let id = UUID()
+struct Sound: Identifiable, Codable {
+    var id = UUID()
     let name: String
     var isUserCreated: Bool = false
     var notes: String = ""
 }
 
 class SoundManager: ObservableObject {
-    @Published var sounds: [Sound] = [
+    private static let savedSoundsKey = "savedSounds"
+    
+    private static let defaultSounds: [Sound] = [
         Sound(name: "Sirens and alarms"),
         Sound(name: "Car horns"),
         Sound(name: "Emergency vehicles"),
@@ -45,8 +47,26 @@ class SoundManager: ObservableObject {
         Sound(name: "Security beeps")
     ]
     
-    func addSound(name: String) {
-        let newSound = Sound(name: name, isUserCreated: true)
+    @Published var sounds: [Sound] = defaultSounds {
+        didSet {
+            saveSounds()
+        }
+    }
+    
+    init() {
+        loadSounds()
+    }
+    
+    func addSound(name: String, notes: String = "") {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { return }
+        
+        if let index = sounds.firstIndex(where: { $0.name.localizedCaseInsensitiveCompare(trimmedName) == .orderedSame }) {
+            sounds[index].notes = notes
+            return
+        }
+        
+        let newSound = Sound(name: trimmedName, isUserCreated: true, notes: notes)
         sounds.append(newSound)
     }
     
@@ -58,5 +78,28 @@ class SoundManager: ObservableObject {
         if let index = sounds.firstIndex(where: { $0.name == name }) {
             sounds[index].notes = notes
         }
+    }
+    
+    private func loadSounds() {
+        guard let data = UserDefaults.standard.data(forKey: Self.savedSoundsKey),
+              let savedSounds = try? JSONDecoder().decode([Sound].self, from: data) else {
+            sounds = Self.defaultSounds
+            return
+        }
+        
+        let savedByName = savedSounds.reduce(into: [String: Sound]()) { soundsByName, sound in
+            soundsByName[sound.name] = sound
+        }
+        let defaultsWithSavedNotes = Self.defaultSounds.map { defaultSound in
+            guard let savedSound = savedByName[defaultSound.name] else { return defaultSound }
+            return Sound(id: defaultSound.id, name: defaultSound.name, isUserCreated: false, notes: savedSound.notes)
+        }
+        let customSounds = savedSounds.filter { $0.isUserCreated }
+        sounds = defaultsWithSavedNotes + customSounds
+    }
+    
+    private func saveSounds() {
+        guard let data = try? JSONEncoder().encode(sounds) else { return }
+        UserDefaults.standard.set(data, forKey: Self.savedSoundsKey)
     }
 }

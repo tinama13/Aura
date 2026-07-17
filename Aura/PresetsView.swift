@@ -36,7 +36,11 @@ struct PresetsView: View {
                 ForEach(presetManager.favoritePresets) { preset in
                     PresetModeButton(
                         preset: preset,
-                        isSelected: presetManager.activePresetID == preset.id
+                        isSelected: presetManager.activePresetID == preset.id,
+                        onLongPress: {
+                            presetManager.activePresetID = preset.id
+                            showingAddSheet = true
+                        }
                     ) {
                         presetManager.activePresetID = preset.id
                     }
@@ -87,8 +91,17 @@ struct PresetsView: View {
                     
                     Spacer()
                     
-                    Button("Select all") {
-                        presetManager.addAllToPreset(presetID: presetManager.activePresetID, allSounds: soundManager.sounds)
+                    let isAllSelected = presetManager.areAllSoundsSelected(
+                        presetID: presetManager.activePresetID,
+                        allSounds: soundManager.sounds
+                    )
+                    
+                    Button(isAllSelected ? "Deselect all" : "Select all") {
+                        if isAllSelected {
+                            presetManager.removeAllFromPreset(presetID: presetManager.activePresetID)
+                        } else {
+                            presetManager.addAllToPreset(presetID: presetManager.activePresetID, allSounds: soundManager.sounds)
+                        }
                     }
                     .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(Color(red: 0.204, green: 0.678, blue: 0.914))
@@ -100,12 +113,20 @@ struct PresetsView: View {
                 
                 ScrollView {
                     VStack(spacing: 8) {
-                        ForEach(presetManager.getVisibleSounds(for: presetManager.activePreset), id: \.self) { category in
+                        ForEach(presetManager.orderedSounds(for: presetManager.activePreset, allSounds: soundManager.sounds), id: \.self) { category in
+                            let isDefaultSound = presetManager.isDefaultSound(
+                                presetID: presetManager.activePresetID,
+                                soundName: category
+                            )
+                            
                             CategoryRow(
                                 title: category,
-                                isSelected: presetManager.isSoundSelected(presetID: presetManager.activePresetID, soundName: category)
+                                isSelected: presetManager.isSoundSelected(presetID: presetManager.activePresetID, soundName: category),
+                                isLocked: isDefaultSound
                             ) {
-                                presetManager.toggleSelection(presetID: presetManager.activePresetID, soundName: category)
+                                if !isDefaultSound {
+                                    presetManager.toggleSelection(presetID: presetManager.activePresetID, soundName: category)
+                                }
                             }
                         }
                     }
@@ -114,13 +135,6 @@ struct PresetsView: View {
                     .padding(.bottom, 10)
                 }
                 .frame(maxHeight: .infinity)
-                
-                Button("Add More Sounds") {
-                    showingAddSheet = true
-                }
-                .font(.system(size: 14, weight: .bold))
-                .foregroundStyle(.blue)
-                .padding(.top, 10)
                 .sheet(isPresented: $showingAddSheet) {
                     AddSoundsToPresetView()
                 }
@@ -160,6 +174,7 @@ struct PresetsView: View {
 private struct PresetModeButton: View {
     let preset: Preset
     let isSelected: Bool
+    let onLongPress: () -> Void
     let action: () -> Void
     
     var body: some View {
@@ -184,12 +199,17 @@ private struct PresetModeButton: View {
             }
         }
         .buttonStyle(.plain)
+        .simultaneousGesture(
+            LongPressGesture()
+                .onEnded { _ in onLongPress() }
+        )
     }
 }
 
 private struct CategoryRow: View {
     let title: String
     let isSelected: Bool
+    let isLocked: Bool
     let action: () -> Void
     
     var body: some View {
@@ -197,19 +217,20 @@ private struct CategoryRow: View {
             HStack {
                 Text(title)
                     .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(.black)
+                    .foregroundStyle(isLocked ? .gray : .black)
                 
                 Spacer()
                 
                 if isSelected {
                     Image(systemName: "checkmark")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(.black)
+                        .foregroundStyle(isLocked ? .gray : .black)
                 }
             }
             .padding(.horizontal, 10)
             .frame(height: 36)
             .background(Color.white)
+            .opacity(isLocked ? 0.65 : 1.0)
             .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 9, style: .continuous)

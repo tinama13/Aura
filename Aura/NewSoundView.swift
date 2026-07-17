@@ -219,7 +219,7 @@ struct NewSoundView: View {
             
             Button(action: {
                 print("Saving sound: \(soundName) with note: \(soundNote)")
-                soundManager.addSound(name: soundName)
+                soundManager.addSound(name: soundName, notes: soundNote)
                 dismiss()
             }) {
                 Text("Save to Library")

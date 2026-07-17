@@ -108,6 +108,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         streamAnalyzer = nil
         resetDetectionState()
         clearAudioState()
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         print("AI stopped listening.")
     }
     
