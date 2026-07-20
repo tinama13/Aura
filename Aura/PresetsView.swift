@@ -11,6 +11,7 @@ import Combine
 struct PresetsView: View {
     @EnvironmentObject var presetManager: PresetManager
     @EnvironmentObject var soundManager: SoundManager
+    @AppStorage("auraTutorialStepName") private var tutorialStepName = ""
     
     @State private var showingNewPresetSheet = false
     @State private var showingAddSheet = false
@@ -32,10 +33,17 @@ struct PresetsView: View {
                         preset: preset,
                         isSelected: presetManager.activePresetID == preset.id,
                         onLongPress: {
-                            presetManager.activePresetID = preset.id
-                            showingAddSheet = true
+                            if tutorialStepName == "holdPreset" {
+                                guard presetManager.activePresetID == preset.id else { return }
+                                showingAddSheet = true
+                                NotificationCenter.default.post(name: .auraTutorialPresetHeld, object: nil)
+                            } else if tutorialStepName.isEmpty {
+                                presetManager.activePresetID = preset.id
+                                showingAddSheet = true
+                            }
                         }
                     ) {
+                        guard tutorialStepName.isEmpty else { return }
                         presetManager.activePresetID = preset.id
                     }
                 }
@@ -44,6 +52,7 @@ struct PresetsView: View {
             .padding(.horizontal, 26)
             
             Button(action: {
+                guard tutorialStepName.isEmpty else { return }
                 showingAllPresetsSheet = true
             }) {
                 HStack {
@@ -84,30 +93,11 @@ struct PresetsView: View {
                         .foregroundStyle(.black)
                     
                     Spacer()
-                    
-                    let isAllSelected = presetManager.areAllSoundsSelected(
-                        presetID: presetManager.activePresetID,
-                        allSounds: soundManager.sounds
-                    )
-                    
-                    Button(isAllSelected ? "Deselect all" : "Select all") {
-                        if isAllSelected {
-                            presetManager.removeAllFromPreset(presetID: presetManager.activePresetID)
-                        } else {
-                            presetManager.addAllToPreset(presetID: presetManager.activePresetID, allSounds: soundManager.sounds)
-                        }
-                    }
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(Color(red: 0.204, green: 0.678, blue: 0.914))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color(red: 0.204, green: 0.678, blue: 0.914).opacity(0.1))
-                    .clipShape(Capsule())
                 }
                 
                 ScrollView {
                     VStack(spacing: 8) {
-                        ForEach(presetManager.orderedSounds(for: presetManager.activePreset, allSounds: soundManager.sounds), id: \.self) { category in
+                        ForEach(presetManager.getVisibleSounds(for: presetManager.activePreset), id: \.self) { category in
                             let isDefaultSound = presetManager.isDefaultSound(
                                 presetID: presetManager.activePresetID,
                                 soundName: category
@@ -117,11 +107,7 @@ struct PresetsView: View {
                                 title: category,
                                 isSelected: presetManager.isSoundSelected(presetID: presetManager.activePresetID, soundName: category),
                                 isLocked: isDefaultSound
-                            ) {
-                                if !isDefaultSound {
-                                    presetManager.toggleSelection(presetID: presetManager.activePresetID, soundName: category)
-                                }
-                            }
+                            )
                         }
                     }
                     .padding(.horizontal, 2)
@@ -139,6 +125,7 @@ struct PresetsView: View {
             Spacer()
             
             Button {
+                guard tutorialStepName.isEmpty else { return }
                 showingNewPresetSheet = true // 👉 FIXED: This triggers the sheet to open
             } label: {
                 HStack(spacing: 10) {
@@ -153,6 +140,9 @@ struct PresetsView: View {
                 .clipShape(Capsule())
             }
             .buttonStyle(.plain)
+            .anchorPreference(key: AuraTutorialHighlightPreferenceKey.self, value: .bounds) { anchor in
+                [.newPresetButton: anchor]
+            }
             .padding(.bottom, 40)
             .sheet(isPresented: $showingNewPresetSheet) { // 👉 FIXED: This tells it which view to show
                 NewPresetView()
@@ -204,34 +194,30 @@ private struct CategoryRow: View {
     let title: String
     let isSelected: Bool
     let isLocked: Bool
-    let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
-            HStack {
-                Text(title)
-                    .font(.system(size: 17, weight: .bold))
+        HStack {
+            Text(title)
+                .font(.system(size: 17, weight: .bold))
+                .foregroundStyle(isLocked ? .gray : .black)
+            
+            Spacer()
+            
+            if isSelected {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(isLocked ? .gray : .black)
-                
-                Spacer()
-                
-                if isSelected {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(isLocked ? .gray : .black)
-                }
-            }
-            .padding(.horizontal, 10)
-            .frame(height: 36)
-            .background(Color.white)
-            .opacity(isLocked ? 0.65 : 1.0)
-            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .stroke(Color.black.opacity(0.38), lineWidth: 1)
             }
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 10)
+        .frame(height: 36)
+        .background(Color.white)
+        .opacity(isLocked ? 0.65 : 1.0)
+        .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 9, style: .continuous)
+                .stroke(Color.black.opacity(0.38), lineWidth: 1)
+        }
     }
 }
 

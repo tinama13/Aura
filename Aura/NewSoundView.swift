@@ -45,19 +45,22 @@ struct NewSoundView: View {
     private var recordingScreen: some View {
         VStack(alignment: .leading, spacing: 0) {
             
-            ZStack(alignment: .leading) {
-                AuraHeaderView()
-                
+            AuraHeaderView()
+                .padding(.top, 20)
+            
+            HStack {
                 Button(action: goBack) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 22, weight: .semibold))
                         .foregroundColor(.black)
                         .frame(width: 44, height: 44)
                 }
-                .padding(.leading, 12)
+                
+                Spacer()
             }
-            .padding(.top, 20)
-            .padding(.bottom, 24)
+            .padding(.horizontal, 12)
+            .padding(.top, 8)
+            .padding(.bottom, 8)
             
             VStack(alignment: .leading, spacing: 8) {
                 Text("New sound")

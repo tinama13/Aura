@@ -24,16 +24,23 @@ struct NavBar: View {
                         Image(systemName: tab.iconName)
                             .font(.system(size: 24))
                             .foregroundColor(.black)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
-                            .background(
-                                Capsule()
-                                    .fill(current_tab == tab ? Color.purple.opacity(0.15) : Color.clear)
-                            )
                         
                         Text(tab.rawValue)
                             .font(.custom("MarkerFelt-Thin", size: 11))
                             .foregroundColor(.black.opacity(0.7))
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(current_tab == tab ? Color.purple.opacity(0.15) : Color.clear)
+                    )
+                    .anchorPreference(key: AuraTutorialHighlightPreferenceKey.self, value: .bounds) { anchor in
+                        if let target = highlightTarget(for: tab) {
+                            [target: anchor]
+                        } else {
+                            [:]
+                        }
                     }
                 }
                 
@@ -44,6 +51,17 @@ struct NavBar: View {
         .padding(.top, 12)
         .padding(.bottom, 30)
         .background(Color(red: 0.88, green: 0.93, blue: 0.96))
+    }
+    
+    private func highlightTarget(for tab: Tab) -> AuraTutorialHighlightTarget? {
+        switch tab {
+        case .presets:
+            return .presetsTab
+        case .sounds:
+            return .soundsTab
+        case .home:
+            return nil
+        }
     }
 }
 

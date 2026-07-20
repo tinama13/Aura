@@ -57,12 +57,17 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     private let audioEngine = AVAudioEngine()
     private let audioBufferLock = NSLock()
     private var streamAnalyzer: SNAudioStreamAnalyzer?
+    private var silenceSourceNode: AVAudioSourceNode?
     private var recordingFormat: AVAudioFormat?
     private var recentAudioBuffers: [BufferedAudio] = []
     private var pendingDetectionRecording: PendingDetectionRecording?
     private var currentCandidate: String?
     private var candidateCount = 0
     private var lastDetectionTimes: [String: Date] = [:]
+    private var listeningStartedAt: Date?
+    private var lastAudioBufferReceivedAt: Date?
+    private var lastAudioTapLogAt: Date?
+    private var lastClassificationLogAt: Date?
     
     private let detectionRecordingDuration: TimeInterval = 4
     private let minimumConfidence = 0.2
@@ -78,16 +83,56 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         audioEngine.isRunning
     }
     
+    var audioEngineNotificationObject: AVAudioEngine {
+        audioEngine
+    }
+    
+    var secondsSinceLastAudioBuffer: TimeInterval? {
+        guard let lastAudioBufferReceivedAt else { return nil }
+        return Date().timeIntervalSince(lastAudioBufferReceivedAt)
+    }
+    
+    var secondsSinceListeningStartedWithoutAudio: TimeInterval? {
+        guard audioEngine.isRunning,
+              lastAudioBufferReceivedAt == nil,
+              let listeningStartedAt else {
+            return nil
+        }
+        return Date().timeIntervalSince(listeningStartedAt)
+    }
+    
+    var debugStatus: String {
+        let lastBufferDescription: String
+        if let secondsSinceLastAudioBuffer {
+            lastBufferDescription = String(format: "%.1fs ago", secondsSinceLastAudioBuffer)
+        } else {
+            lastBufferDescription = "never"
+        }
+        
+        let noBufferDescription: String
+        if let secondsSinceListeningStartedWithoutAudio {
+            noBufferDescription = String(format: "%.1fs", secondsSinceListeningStartedWithoutAudio)
+        } else {
+            noBufferDescription = "n/a"
+        }
+        
+        return "engineRunning=\(audioEngine.isRunning), lastBuffer=\(lastBufferDescription), startedWithoutBuffer=\(noBufferDescription)"
+    }
+    
     @discardableResult
     func startListening() -> Bool {
         if audioEngine.isRunning {
-            stopListening()
-        } else {
-            audioEngine.inputNode.removeTap(onBus: 0)
-            streamAnalyzer = nil
-            resetDetectionState()
-            clearAudioState()
+            return true
         }
+        
+        audioEngine.inputNode.removeTap(onBus: 0)
+        streamAnalyzer = nil
+        resetDetectionState()
+        clearAudioState()
+        listeningStartedAt = nil
+        lastAudioBufferReceivedAt = nil
+        lastAudioTapLogAt = nil
+        lastClassificationLogAt = nil
         
         guard let model = try? AuraSoundDetection(configuration: MLModelConfiguration()) else {
             print("Failed to load the Create ML model.")
@@ -100,18 +145,20 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             let request = try SNClassifySoundRequest(mlModel: mlModel)
             request.overlapFactor = 0.5
             
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.record, mode: .measurement, options: [.duckOthers])
-            try audioSession.setActive(true)
+            try configureAudioSessionForContinuousListening()
             
             let inputNode = audioEngine.inputNode
             let inputFormat = inputNode.outputFormat(forBus: 0)
             recordingFormat = inputFormat
+            installSilentOutputNode(sampleRate: inputFormat.sampleRate)
             
             streamAnalyzer = SNAudioStreamAnalyzer(format: inputFormat)
             try streamAnalyzer?.add(request, withObserver: self)
             
             inputNode.installTap(onBus: 0, bufferSize: 8192, format: inputFormat) { [weak self] buffer, time in
+                let now = Date()
+                self?.lastAudioBufferReceivedAt = now
+                self?.logAudioTapIfNeeded(at: now)
                 self?.storeRecentAudio(buffer, at: time.sampleTime)
                 self?.streamAnalyzer?.analyze(buffer, atAudioFramePosition: time.sampleTime)
             }
@@ -120,6 +167,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             clearAudioState()
             audioEngine.prepare()
             try audioEngine.start()
+            listeningStartedAt = Date()
             print("AI is now actively listening!")
             return true
             
@@ -136,11 +184,72 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     func stopListening() {
         audioEngine.stop()
         audioEngine.inputNode.removeTap(onBus: 0)
+        if let silenceSourceNode {
+            audioEngine.detach(silenceSourceNode)
+            self.silenceSourceNode = nil
+        }
         streamAnalyzer = nil
         resetDetectionState()
         clearAudioState()
+        listeningStartedAt = nil
+        lastAudioBufferReceivedAt = nil
+        lastAudioTapLogAt = nil
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         print("AI stopped listening.")
+    }
+    
+    private func configureAudioSessionForContinuousListening() throws {
+        let audioSession = AVAudioSession.sharedInstance()
+        try audioSession.setPreferredSampleRate(44_100)
+        try audioSession.setPreferredIOBufferDuration(0.02)
+        try audioSession.setCategory(
+            .playAndRecord,
+            mode: .measurement,
+            options: [.allowBluetoothHFP, .defaultToSpeaker, .mixWithOthers]
+        )
+        try audioSession.setActive(true)
+        
+        if let builtInMic = audioSession.availableInputs?.first(where: { $0.portType == .builtInMic }) {
+            try? audioSession.setPreferredInput(builtInMic)
+        }
+    }
+    
+    private func installSilentOutputNode(sampleRate: Double) {
+        if let silenceSourceNode {
+            audioEngine.detach(silenceSourceNode)
+            self.silenceSourceNode = nil
+        }
+        
+        let sourceNode = AVAudioSourceNode { _, _, frameCount, audioBufferList -> OSStatus in
+            let buffers = UnsafeMutableAudioBufferListPointer(audioBufferList)
+            for buffer in buffers {
+                guard let data = buffer.mData else { continue }
+                memset(data, 0, Int(buffer.mDataByteSize))
+            }
+            return noErr
+        }
+        
+        let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1)
+        audioEngine.attach(sourceNode)
+        audioEngine.connect(sourceNode, to: audioEngine.mainMixerNode, format: format)
+        audioEngine.mainMixerNode.outputVolume = 0.0001
+        silenceSourceNode = sourceNode
+    }
+    
+    private func logAudioTapIfNeeded(at date: Date) {
+        guard lastAudioTapLogAt == nil || date.timeIntervalSince(lastAudioTapLogAt!) >= 5 else {
+            return
+        }
+        lastAudioTapLogAt = date
+        print("Aura audio tap active at \(date)")
+    }
+    
+    private func logClassificationIfNeeded(label: String, confidence: Double, at date: Date) {
+        guard lastClassificationLogAt == nil || date.timeIntervalSince(lastClassificationLogAt!) >= 5 else {
+            return
+        }
+        lastClassificationLogAt = date
+        print("Aura classification heartbeat: label=\(label), confidence=\(String(format: "%.2f", confidence)), time=\(date)")
     }
     
     func request(_ request: SNRequest, didProduce result: SNResult) {
@@ -149,6 +258,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         
         let label = bestClassification.identifier
         let confidence = bestClassification.confidence
+        logClassificationIfNeeded(label: label, confidence: confidence, at: Date())
         updatePendingRecording(with: label, confidence: confidence, at: Date())
         
         guard confidence >= minimumConfidence, !isNonActionableLabel(label) else {
