@@ -47,6 +47,8 @@ struct EventTimelineView: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            AuraHeaderView()
+            
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")
@@ -76,7 +78,7 @@ struct EventTimelineView: View {
                 } label: {
                     HStack {
                         Image(systemName: audioPlayer.isPlaying ? "stop.fill" : "play.fill")
-                        Text(audioPlayer.isPlaying ? "Stop Recording" : "Play Detection Recording")
+                        Text(audioPlayer.isPlaying ? "Stop Playing Detection Recording" : "Play Detection Recording")
                     }
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(Color(red: 0.204, green: 0.678, blue: 0.914))
@@ -147,36 +149,22 @@ class EventAudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             stopPlayback()
         } else {
             do {
-                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.allowBluetoothA2DP])
-                try AVAudioSession.sharedInstance().setActive(true)
+                let audioSession = AVAudioSession.sharedInstance()
+                try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothHFP])
+                try audioSession.setActive(true)
+                try audioSession.overrideOutputAudioPort(.speaker)
                 
-                if playWithAVAudioPlayer(url: url) {
-                    return
-                }
-                
-                let audioFile = try AVAudioFile(forReading: url)
-                if !isPlayerNodeAttached {
-                    audioEngine.attach(playerNode)
-                    isPlayerNodeAttached = true
-                }
-                
-                audioEngine.disconnectNodeOutput(playerNode)
-                audioEngine.connect(playerNode, to: audioEngine.mainMixerNode, format: audioFile.processingFormat)
-                playerNode.scheduleFile(audioFile, at: nil) { [weak self] in
-                    DispatchQueue.main.async {
-                        self?.isPlaying = false
-                        self?.audioEngine.stop()
+                do {
+                    if try playWithAudioEngine(url: url) {
+                        return
                     }
+                } catch {
+                    print("Audio engine could not play detection audio: \(error.localizedDescription)")
                 }
                 
-                if !audioEngine.isRunning {
-                    try audioEngine.start()
-                }
-                
-                playerNode.play()
-                isPlaying = true
+                playWithAVAudioPlayer(url: url)
             } catch {
-                print("Failed to play audio: \(error.localizedDescription)")
+                print("Failed to set up detection playback: \(error.localizedDescription)")
                 isPlaying = false
             }
         }
@@ -190,18 +178,43 @@ class EventAudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         isPlaying = false
     }
     
-    private func playWithAVAudioPlayer(url: URL) -> Bool {
+    private func playWithAudioEngine(url: URL) throws -> Bool {
+        let audioFile = try AVAudioFile(forReading: url)
+        guard audioFile.length > 0 else { return false }
+        
+        if !isPlayerNodeAttached {
+            audioEngine.attach(playerNode)
+            isPlayerNodeAttached = true
+        }
+        
+        audioEngine.stop()
+        playerNode.stop()
+        audioEngine.disconnectNodeOutput(playerNode)
+        audioEngine.connect(playerNode, to: audioEngine.mainMixerNode, format: audioFile.processingFormat)
+        playerNode.scheduleFile(audioFile, at: nil) { [weak self] in
+            DispatchQueue.main.async {
+                self?.isPlaying = false
+                self?.audioEngine.stop()
+            }
+        }
+        
+        try audioEngine.start()
+        playerNode.play()
+        isPlaying = true
+        return true
+    }
+    
+    private func playWithAVAudioPlayer(url: URL) {
         do {
             audioPlayer = try AVAudioPlayer(contentsOf: url)
             audioPlayer?.delegate = self
+            audioPlayer?.volume = 1.0
             audioPlayer?.prepareToPlay()
-            audioPlayer?.play()
-            isPlaying = true
-            return true
+            isPlaying = audioPlayer?.play() ?? false
         } catch {
             print("AVAudioPlayer could not play detection audio: \(error.localizedDescription)")
             audioPlayer = nil
-            return false
+            isPlaying = false
         }
     }
     

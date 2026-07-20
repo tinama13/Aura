@@ -56,6 +56,7 @@ class AudioRecorder: NSObject, ObservableObject, AVAudioPlayerDelegate {
     
     func stopRecording() {
         audioRecorder?.stop()
+        audioRecorder = nil
         print("Recording stopped")
     }
     
@@ -64,16 +65,20 @@ class AudioRecorder: NSObject, ObservableObject, AVAudioPlayerDelegate {
         let audioFilename = documentPath.appendingPathComponent("\(fileName).m4a")
         
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.allowBluetoothA2DP])
-            try AVAudioSession.sharedInstance().setActive(true)
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothHFP])
+            try audioSession.setActive(true)
+            try audioSession.overrideOutputAudioPort(.speaker)
             
             audioPlayer = try AVAudioPlayer(contentsOf: audioFilename)
             audioPlayer?.delegate = self
-            audioPlayer?.play()
-            isPlaying = true
+            audioPlayer?.volume = 1.0
+            audioPlayer?.prepareToPlay()
+            isPlaying = audioPlayer?.play() ?? false
             print("Playing back: \(audioFilename)")
         } catch {
             print("Playback failed: \(error.localizedDescription)")
+            isPlaying = false
         }
     }
     

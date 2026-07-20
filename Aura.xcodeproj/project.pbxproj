@@ -6,11 +6,52 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C223EBC2300E897800FBEF43 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C223EBC1300E897800FBEF43 /* WidgetKit.framework */; };
+		C223EBC4300E897800FBEF43 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C223EBC3300E897800FBEF43 /* SwiftUI.framework */; };
+		C223EBD5300E897A00FBEF43 /* AuraControlsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C223EBBF300E897800FBEF43 /* AuraControlsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C223EBD3300E897A00FBEF43 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E670C31A2FFD4F6500DD4714 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C223EBBE300E897800FBEF43;
+			remoteInfo = AuraControlsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C223EBDA300E897A00FBEF43 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C223EBD5300E897A00FBEF43 /* AuraControlsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		C223EBBF300E897800FBEF43 /* AuraControlsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = AuraControlsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C223EBC1300E897800FBEF43 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C223EBC3300E897800FBEF43 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C223EBDD300E8F4C00FBEF43 /* AuraControlsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AuraControlsExtension.entitlements; sourceTree = "<group>"; };
 		E670C3222FFD4F6500DD4714 /* Aura.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Aura.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C223EBD9300E897A00FBEF43 /* Exceptions for "AuraControls" folder in "AuraControlsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C223EBBE300E897800FBEF43 /* AuraControlsExtension */;
+		};
 		D444E315300A781000BE52D8 /* Exceptions for "Aura" folder in "Aura" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -21,6 +62,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		C223EBC5300E897800FBEF43 /* AuraControls */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C223EBD9300E897A00FBEF43 /* Exceptions for "AuraControls" folder in "AuraControlsExtension" target */,
+			);
+			path = AuraControls;
+			sourceTree = "<group>";
+		};
 		E670C3242FFD4F6500DD4714 /* Aura */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -32,6 +81,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C223EBBC300E897800FBEF43 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C223EBC4300E897800FBEF43 /* SwiftUI.framework in Frameworks */,
+				C223EBC2300E897800FBEF43 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E670C31F2FFD4F6500DD4714 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -42,10 +100,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C223EBC0300E897800FBEF43 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C223EBC1300E897800FBEF43 /* WidgetKit.framework */,
+				C223EBC3300E897800FBEF43 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E670C3192FFD4F6500DD4714 = {
 			isa = PBXGroup;
 			children = (
+				C223EBDD300E8F4C00FBEF43 /* AuraControlsExtension.entitlements */,
 				E670C3242FFD4F6500DD4714 /* Aura */,
+				C223EBC5300E897800FBEF43 /* AuraControls */,
+				C223EBC0300E897800FBEF43 /* Frameworks */,
 				E670C3232FFD4F6500DD4714 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				E670C3222FFD4F6500DD4714 /* Aura.app */,
+				C223EBBF300E897800FBEF43 /* AuraControlsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,6 +132,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C223EBBE300E897800FBEF43 /* AuraControlsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C223EBD6300E897A00FBEF43 /* Build configuration list for PBXNativeTarget "AuraControlsExtension" */;
+			buildPhases = (
+				C223EBBB300E897800FBEF43 /* Sources */,
+				C223EBBC300E897800FBEF43 /* Frameworks */,
+				C223EBBD300E897800FBEF43 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C223EBC5300E897800FBEF43 /* AuraControls */,
+			);
+			name = AuraControlsExtension;
+			packageProductDependencies = (
+			);
+			productName = AuraControlsExtension;
+			productReference = C223EBBF300E897800FBEF43 /* AuraControlsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		E670C3212FFD4F6500DD4714 /* Aura */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E670C32D2FFD4F6600DD4714 /* Build configuration list for PBXNativeTarget "Aura" */;
@@ -68,10 +161,12 @@
 				E670C31E2FFD4F6500DD4714 /* Sources */,
 				E670C31F2FFD4F6500DD4714 /* Frameworks */,
 				E670C3202FFD4F6500DD4714 /* Resources */,
+				C223EBDA300E897A00FBEF43 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C223EBD4300E897A00FBEF43 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				E670C3242FFD4F6500DD4714 /* Aura */,
@@ -90,9 +185,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2630;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
+					C223EBBE300E897800FBEF43 = {
+						CreatedOnToolsVersion = 26.6;
+					};
 					E670C3212FFD4F6500DD4714 = {
 						CreatedOnToolsVersion = 26.3;
 					};
@@ -113,11 +211,19 @@
 			projectRoot = "";
 			targets = (
 				E670C3212FFD4F6500DD4714 /* Aura */,
+				C223EBBE300E897800FBEF43 /* AuraControlsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C223EBBD300E897800FBEF43 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E670C3202FFD4F6500DD4714 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -128,6 +234,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C223EBBB300E897800FBEF43 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E670C31E2FFD4F6500DD4714 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -137,7 +250,77 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		C223EBD4300E897A00FBEF43 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C223EBBE300E897800FBEF43 /* AuraControlsExtension */;
+			targetProxy = C223EBD3300E897A00FBEF43 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		C223EBD7300E897A00FBEF43 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = AuraControlsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AuraControls/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = AuraControls;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.tinama.auraTesting123NEWW.AuraControls;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C223EBD8300E897A00FBEF43 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = AuraControlsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AuraControls/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = AuraControls;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.tinama.auraTesting123NEWW.AuraControls;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		E670C32B2FFD4F6600DD4714 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -266,6 +449,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Aura/Aura.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -299,6 +483,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Aura/Aura.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -330,6 +515,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C223EBD6300E897A00FBEF43 /* Build configuration list for PBXNativeTarget "AuraControlsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C223EBD7300E897A00FBEF43 /* Debug */,
+				C223EBD8300E897A00FBEF43 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E670C31D2FFD4F6500DD4714 /* Build configuration list for PBXProject "Aura" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

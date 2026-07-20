@@ -26,13 +26,8 @@ struct SoundsView: View {
         // No NavigationStack here — ContentView provides one for the whole app,
         // so the NavigationLinks below push their screens over the full screen.
         VStack(spacing: 0) {
-            HStack {
-                Text("Aura")
-                    .font(.custom("MarkerFelt-Thin", size: 30))
-                Spacer()
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
+            AuraHeaderView()
+                .padding(.top, 20)
 
             HStack {
                 Text("All Sounds")

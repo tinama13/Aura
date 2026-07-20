@@ -13,6 +13,8 @@ struct FullHistoryView: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            AuraHeaderView()
+            
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")

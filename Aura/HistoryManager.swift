@@ -25,13 +25,22 @@ struct TimelineNode: Identifiable, Hashable, Codable {
 }
 
 struct DetectedEvent: Identifiable, Hashable, Codable {
-    var id = UUID()
+    var id: UUID
     let name: String
     let timestamp: Date
     let endedAt: Date?
     let timeline: [TimelineNode]
     
     var audioFileURL: URL?
+    
+    init(id: UUID = UUID(), name: String, timestamp: Date, endedAt: Date?, timeline: [TimelineNode], audioFileURL: URL?) {
+        self.id = id
+        self.name = name
+        self.timestamp = timestamp
+        self.endedAt = endedAt
+        self.timeline = timeline
+        self.audioFileURL = audioFileURL
+    }
     
     var durationText: String? {
         guard let endedAt else { return nil }
@@ -80,8 +89,17 @@ class HistoryManager: ObservableObject {
         loadEvents()
     }
     
-    func logEvent(name: String, timestamp: Date = Date(), endedAt: Date? = nil, timeline: [TimelineNode], audioFileURL: URL? = nil) -> DetectedEvent {
-        let newEvent = DetectedEvent(name: name, timestamp: timestamp, endedAt: endedAt, timeline: timeline, audioFileURL: audioFileURL)
+    func containsEvent(id: UUID) -> Bool {
+        events.contains { $0.id == id }
+    }
+    
+    func logEvent(id: UUID = UUID(), name: String, timestamp: Date = Date(), endedAt: Date? = nil, timeline: [TimelineNode], audioFileURL: URL? = nil) -> DetectedEvent {
+        let newEvent = DetectedEvent(id: id, name: name, timestamp: timestamp, endedAt: endedAt, timeline: timeline, audioFileURL: audioFileURL)
+        if let existingIndex = events.firstIndex(where: { $0.id == id }) {
+            events[existingIndex] = newEvent
+            return newEvent
+        }
+        
         events.insert(newEvent, at: 0)
         return newEvent
     }

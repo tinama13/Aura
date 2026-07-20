@@ -1,50 +1,35 @@
 import SwiftUI
 import UserNotifications
 import Combine
-import AudioToolbox
-import UIKit
 
 struct HomeView: View {
-    // TEMPORARY (dev only): lets the reset button below replay onboarding.
-    // Remove together with the button before shipping.
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = true
-
-    @State private var isListening = false
     @State private var isPulsing = false
-    
-    @StateObject private var recognizer = SoundRecognizer()
-    
-    @State private var showAlert = false
-    @State private var currentAlertSound = ""
-    
-    @State private var eventToNavigateTo: DetectedEvent? = nil
-    @State private var pendingEvent: DetectedEvent? = nil
     
     @EnvironmentObject var presetManager: PresetManager
     @EnvironmentObject var historyManager: HistoryManager
+    @EnvironmentObject var listeningManager: ListeningManager
     
     var body: some View {
         NavigationStack {
             ZStack {
                 VStack(spacing: 0) {
-                    HStack {
-                        Text("Aura")
-                            .font(.custom("MarkerFelt-Thin", size: 34))
-                            .foregroundStyle(.black)
-                        Spacer()
-
-                        // TEMPORARY (dev only): replays onboarding. Remove before shipping.
+                    ZStack(alignment: .trailing) {
+                        AuraHeaderView()
+                        
                         Button {
-                            hasCompletedOnboarding = false
+                            NotificationCenter.default.post(name: .auraRestartTutorial, object: nil)
                         } label: {
-                            Image(systemName: "arrow.counterclockwise.circle")
-                                .font(.system(size: 22))
-                                .foregroundColor(.gray)
+                            Image(systemName: "arrow.counterclockwise")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundStyle(Color(red: 0.204, green: 0.678, blue: 0.914))
+                                .frame(width: 40, height: 40)
+                                .background(Circle().fill(Color(red: 0.90, green: 0.97, blue: 1.0)))
+                                .overlay(Circle().stroke(Color(red: 0.204, green: 0.678, blue: 0.914).opacity(0.35), lineWidth: 1))
                         }
                         .buttonStyle(.plain)
+                        .padding(.trailing, 18)
                     }
-                    .padding(.top, 34)
-                    .padding(.horizontal, 26)
+                    .padding(.top, 20)
                     
                     Text(presetManager.activePreset.title)
                         .font(.system(size: 30, weight: .bold))
@@ -53,45 +38,41 @@ struct HomeView: View {
                     
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
-                            isListening.toggle()
-                        }
-                        
-                        if isListening {
-                            isPulsing = true
-                            recognizer.startListening()
-                        } else {
-                            isPulsing = false
-                            recognizer.stopListening()
+                            listeningManager.toggleListening()
+                            isPulsing = listeningManager.isListening
                         }
                     } label: {
                         ZStack {
-                            if isListening {
+                            if listeningManager.isListening {
                                 Circle()
-                                    .stroke(Color.black.opacity(0.18), lineWidth: 3)
+                                    .stroke(Color.green.opacity(0.22), lineWidth: 5)
                                     .frame(width: 170, height: 170)
-                                    .scaleEffect(isPulsing ? 1.12 : 1.0)
+                                    .scaleEffect(isPulsing ? 1.18 : 1.0)
                                     .opacity(isPulsing ? 0.0 : 1.0)
                                     .animation(
-                                        .easeOut(duration: 1.2).repeatForever(autoreverses: false),
+                                        .easeOut(duration: 1.0).repeatForever(autoreverses: false),
                                         value: isPulsing
                                     )
                             }
                             
                             Circle()
+                                .fill(listeningManager.isListening ? Color.green.opacity(0.12) : Color.clear)
+                                .frame(width: 170, height: 170)
+                            
+                            Circle()
                                 .stroke(
-                                    Color.black.opacity(0.85),
+                                    listeningManager.isListening ? Color.green : Color.black.opacity(0.85),
                                     style: StrokeStyle(
                                         lineWidth: 4,
                                         lineCap: .round,
-                                        dash: isListening ? [4, 9] : []
+                                        dash: listeningManager.isListening ? [4, 9] : []
                                     )
                                 )
                                 .frame(width: 170, height: 170)
                             
-                            Image("EarListeningIcon")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 105, height: 105)
+                            Image(systemName: "ear")
+                                .font(.system(size: 92, weight: .regular))
+                                .foregroundStyle(listeningManager.isListening ? .green : .black)
                         }
                         .frame(width: 180, height: 180)
                         .contentShape(Circle())
@@ -99,7 +80,7 @@ struct HomeView: View {
                     .buttonStyle(.plain)
                     .padding(.top, 34)
                     
-                    Text(isListening ? "Listening" : "Tap to Start\nListening")
+                    Text(listeningManager.isListening ? "Listening" : "Tap to Start\nListening")
                         .font(.system(size: 25, weight: .bold))
                         .lineSpacing(1)
                         .multilineTextAlignment(.center)
@@ -157,44 +138,15 @@ struct HomeView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color.white)
-                .opacity(showAlert ? 0.3 : 1.0)
-                
-                if showAlert {
-                    AlertPopupView(
-                        soundName: currentAlertSound,
-                        onDismiss: { withAnimation { showAlert = false } },
-                        onViewDetails: {
-                            if isListening {
-                                isListening = false
-                                isPulsing = false
-                                recognizer.stopListening()
-                            }
-                            self.eventToNavigateTo = self.pendingEvent
-                            withAnimation { showAlert = false }
-                        },
-                        onReadWarning: {
-                            if isListening {
-                                isListening = false
-                                isPulsing = false
-                                recognizer.stopListening()
-                            }
-                        }
-                    )
-                    .transition(.scale.combined(with: .opacity))
-                    .zIndex(1)
-                }
-            }
-            .navigationDestination(item: $eventToNavigateTo) { event in
-                EventTimelineView(event: event)
             }
         }
         
         .onAppear {
             requestNotificationPermission()
+            listeningManager.resumeListeningIfNeeded()
         }
-        .onChange(of: recognizer.latestDetection) { oldValue, newValue in
-            guard let detection = newValue else { return }
-            triggerAlert(for: detection)
+        .onChange(of: listeningManager.isListening) { oldValue, newValue in
+            isPulsing = newValue
         }
     }
     
@@ -202,51 +154,9 @@ struct HomeView: View {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in }
     }
     
-    private func triggerAlert(for detection: SoundDetection) {
-        let displayName = formattedSoundName(detection.name)
-        currentAlertSound = displayName
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-            showAlert = true
-        }
-        
-        let newEvent = historyManager.logEvent(
-            name: displayName,
-            timestamp: detection.timestamp,
-            endedAt: detection.endedAt,
-            timeline: detection.timeline,
-            audioFileURL: detection.audioFileURL
-        )
-        self.pendingEvent = newEvent
-        
-        if isAlarmSound(displayName) {
-            triggerAlarmVibration()
-        }
-        
-        let content = UNMutableNotificationContent()
-        content.title = "Aura"
-        content.body = displayName
-        content.sound = UNNotificationSound.default
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
-    }
-    
-    private func isAlarmSound(_ soundName: String) -> Bool {
-        let normalizedName = soundName.lowercased()
-        return normalizedName.contains("alarm")
-            || normalizedName.contains("siren")
-            || normalizedName.contains("smoke")
-            || normalizedName.contains("emergency")
-    }
-    
-    private func triggerAlarmVibration() {
-        let feedbackGenerator = UINotificationFeedbackGenerator()
-        feedbackGenerator.prepare()
-        feedbackGenerator.notificationOccurred(.warning)
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-    }
-    
     private func isEnabledInActivePreset(_ detectedSound: String) -> Bool {
-        let activeSounds = presetManager.selectedSounds[presetManager.activePresetID] ?? Set(presetManager.activePreset.defaultSounds)
+        let activeSounds = (presetManager.selectedSounds[presetManager.activePresetID] ?? Set(presetManager.activePreset.defaultSounds))
+            .union(presetManager.activePreset.defaultSounds)
         let normalizedDetection = normalizedSoundName(detectedSound)
         
         return activeSounds.contains { activeSound in

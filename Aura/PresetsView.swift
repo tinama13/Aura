@@ -23,14 +23,8 @@ struct PresetsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HStack(alignment: .center) {
-                Text("Aura")
-                    .font(.custom("MarkerFelt-Thin", size: 34))
-                    .foregroundStyle(.black)
-                Spacer()
-            }
-            .padding(.top, 34)
-            .padding(.horizontal, 26)
+            AuraHeaderView()
+                .padding(.top, 20)
             
             LazyVGrid(columns: columns, spacing: 12) {
                 ForEach(presetManager.favoritePresets) { preset in

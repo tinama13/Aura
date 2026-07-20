@@ -9,13 +9,40 @@ import SwiftUI
 import Combine
 import UserNotifications
 
+extension Notification.Name {
+    static let auraOpenDetectedEvent = Notification.Name("auraOpenDetectedEvent")
+}
+
 class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.banner, .sound, .badge])
+        completionHandler([.banner, .list, .sound, .badge])
+    }
+    
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        if response.actionIdentifier == "STOP_LISTENING" {
+            Task { @MainActor in
+                ListeningManager.shared.stopListening()
+                completionHandler()
+            }
+        } else if let eventID = response.notification.request.content.userInfo["eventID"] as? String {
+            UserDefaults.standard.set(eventID, forKey: "pendingNotificationEventID")
+            NotificationCenter.default.post(
+                name: .auraOpenDetectedEvent,
+                object: nil,
+                userInfo: ["eventID": eventID]
+            )
+            completionHandler()
+        } else {
+            completionHandler()
+        }
     }
 }
 
@@ -24,9 +51,11 @@ struct AuraApp: App {
     @StateObject private var soundManager = SoundManager()
     @StateObject private var presetManager = PresetManager()
     @StateObject private var historyManager = HistoryManager()
+    @StateObject private var listeningManager = ListeningManager.shared
     private let notificationDelegate = NotificationDelegate()
     
     init() {
+        ListeningManager.registerNotificationActions()
         UNUserNotificationCenter.current().delegate = notificationDelegate
     }
     
@@ -36,6 +65,7 @@ struct AuraApp: App {
                 .environmentObject(soundManager)
                 .environmentObject(presetManager)
                 .environmentObject(historyManager)
+                .environmentObject(listeningManager)
         }
     }
 }

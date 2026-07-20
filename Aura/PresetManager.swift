@@ -12,6 +12,37 @@ struct Preset: Identifiable, Hashable, Codable {
     var iconName: String
     var defaultSounds: [String]
     var isFavorite: Bool = false
+    var isBuiltIn: Bool = false
+    
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case iconName
+        case defaultSounds
+        case isFavorite
+        case isBuiltIn
+    }
+    
+    init(id: UUID = UUID(), title: String, iconName: String, defaultSounds: [String], isFavorite: Bool = false, isBuiltIn: Bool = false) {
+        self.id = id
+        self.title = title
+        self.iconName = iconName
+        self.defaultSounds = defaultSounds
+        self.isFavorite = isFavorite
+        self.isBuiltIn = isBuiltIn
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        title = try container.decode(String.self, forKey: .title)
+        iconName = try container.decode(String.self, forKey: .iconName)
+        defaultSounds = try container.decode([String].self, forKey: .defaultSounds)
+        isFavorite = try container.decodeIfPresent(Bool.self, forKey: .isFavorite) ?? false
+        isBuiltIn = try container.decodeIfPresent(Bool.self, forKey: .isBuiltIn) ?? Self.builtInTitles.contains(title)
+    }
+    
+    private static let builtInTitles = Set(["Driving", "Walking", "Home", "Public"])
 }
 
 class PresetManager: ObservableObject {
@@ -20,10 +51,10 @@ class PresetManager: ObservableObject {
     private static let savedSelectedSoundsKey = "savedSelectedSounds"
     
     private static let defaultPresets: [Preset] = [
-        Preset(title: "Driving", iconName: "steeringwheel", defaultSounds: ["Sirens and alarms", "Car horns", "Emergency vehicles", "Train crossings", "Motorcycles", "Tires screeching"], isFavorite: true),
-        Preset(title: "Walking", iconName: "figure.walk", defaultSounds: ["Crosswalk signals", "Bike bells", "Approaching cars", "People shouting", "Scooters", "Dogs barking"], isFavorite: true),
-        Preset(title: "Home", iconName: "house.fill", defaultSounds: ["Doorbell", "Kitchen timer", "Smoke alarm", "Baby crying", "Glass breaking", "Appliance beeps"], isFavorite: true),
-        Preset(title: "Public", iconName: "speaker.wave.2.fill", defaultSounds: ["Name called", "Announcements", "Phone ringing", "Loud alarms", "Crowd alerts", "Security beeps"], isFavorite: true)
+        Preset(title: "Driving", iconName: "steeringwheel", defaultSounds: ["Sirens and alarms", "Car horns", "Emergency vehicles", "Train crossings", "Motorcycles", "Tires screeching"], isFavorite: true, isBuiltIn: true),
+        Preset(title: "Walking", iconName: "figure.walk", defaultSounds: ["Crosswalk signals", "Bike bells", "Approaching cars", "People shouting", "Scooters", "Dogs barking"], isFavorite: true, isBuiltIn: true),
+        Preset(title: "Home", iconName: "house.fill", defaultSounds: ["Doorbell", "Kitchen timer", "Smoke alarm", "Baby crying", "Glass breaking", "Appliance beeps"], isFavorite: true, isBuiltIn: true),
+        Preset(title: "Public", iconName: "speaker.wave.2.fill", defaultSounds: ["Name called", "Announcements", "Phone ringing", "Loud alarms", "Crowd alerts", "Security beeps"], isFavorite: true, isBuiltIn: true)
     ]
     
     @Published var presets: [Preset] = defaultPresets {
@@ -80,14 +111,15 @@ class PresetManager: ObservableObject {
     }
     
     func orderedSounds(for preset: Preset, allSounds: [Sound]) -> [String] {
-        let defaultSounds = Set(preset.defaultSounds)
-        let selected = (selectedSounds[preset.id] ?? Set(preset.defaultSounds)).union(defaultSounds)
+        let lockedSounds = Set(lockedDefaultSounds(for: preset))
+        let initiallySelected = Set(preset.defaultSounds).union(lockedSounds)
+        let selected = (selectedSounds[preset.id] ?? initiallySelected).union(lockedSounds)
         let allSoundNames = Set(allSounds.map { $0.name })
-        let visibleSoundNames = allSoundNames.union(selected).union(defaultSounds)
+        let visibleSoundNames = allSoundNames.union(selected).union(lockedSounds)
         
-        let defaultRows = preset.defaultSounds.filter { visibleSoundNames.contains($0) }
+        let defaultRows = lockedDefaultSounds(for: preset).filter { visibleSoundNames.contains($0) }
         let selectedRows = selected
-            .subtracting(defaultSounds)
+            .subtracting(lockedSounds)
             .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
         let uncheckedRows = visibleSoundNames
             .subtracting(selected)
@@ -110,7 +142,7 @@ class PresetManager: ObservableObject {
     
     func toggleSelection(presetID: UUID, soundName: String) {
         let preset = presets.first(where: { $0.id == presetID })!
-        guard !preset.defaultSounds.contains(soundName) else { return }
+        guard !isDefaultSound(presetID: presetID, soundName: soundName) else { return }
         
         var current = selectedSounds[presetID] ?? Set(preset.defaultSounds)
         
@@ -128,8 +160,11 @@ class PresetManager: ObservableObject {
     }
     
     func removeAllFromPreset(presetID: UUID) {
-        let defaults = presets.first(where: { $0.id == presetID })?.defaultSounds ?? []
-        selectedSounds[presetID] = Set(defaults)
+        guard let preset = presets.first(where: { $0.id == presetID }) else {
+            selectedSounds[presetID] = []
+            return
+        }
+        selectedSounds[presetID] = Set(lockedDefaultSounds(for: preset))
     }
     
     func areAllSoundsSelected(presetID: UUID, allSounds: [Sound]) -> Bool {
@@ -140,15 +175,27 @@ class PresetManager: ObservableObject {
     }
     
     func isDefaultSound(presetID: UUID, soundName: String) -> Bool {
-        presets.first(where: { $0.id == presetID })?.defaultSounds.contains(soundName) ?? false
+        guard let preset = presets.first(where: { $0.id == presetID }) else { return false }
+        return preset.isBuiltIn && preset.defaultSounds.contains(soundName)
+    }
+    
+    func activateFavoritePreset(at index: Int) {
+        let favorites = favoritePresets
+        guard favorites.indices.contains(index) else { return }
+        activePresetID = favorites[index].id
     }
     
     func createNewPreset(title: String, icon: String, sounds: Set<String>) {
         let sortedSounds = sounds.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
         let newPreset = Preset(title: title, iconName: icon, defaultSounds: sortedSounds, isFavorite: true)
         presets.insert(newPreset, at: 0)
+        selectedSounds[newPreset.id] = Set(sortedSounds)
         activePresetID = newPreset.id
         keepFirstFourFavorites()
+    }
+    
+    private func lockedDefaultSounds(for preset: Preset) -> [String] {
+        preset.isBuiltIn ? preset.defaultSounds : []
     }
     
     private func keepFirstFourFavorites() {

@@ -12,13 +12,23 @@ import CoreML
 import AVFoundation
 
 struct SoundDetection: Identifiable, Equatable {
-    let id = UUID()
+    let id: UUID
     let name: String
     let confidence: Double
     let timestamp: Date
     let endedAt: Date
     let timeline: [TimelineNode]
     let audioFileURL: URL?
+    
+    init(id: UUID = UUID(), name: String, confidence: Double, timestamp: Date, endedAt: Date, timeline: [TimelineNode], audioFileURL: URL?) {
+        self.id = id
+        self.name = name
+        self.confidence = confidence
+        self.timestamp = timestamp
+        self.endedAt = endedAt
+        self.timeline = timeline
+        self.audioFileURL = audioFileURL
+    }
 }
 
 class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
@@ -28,6 +38,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     }
     
     private struct PendingDetectionRecording {
+        let id: UUID
         let label: String
         let confidence: Double
         let detectedAt: Date
@@ -53,9 +64,9 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     private var candidateCount = 0
     private var lastDetectionTimes: [String: Date] = [:]
     
-    private let detectionRecordingDuration: TimeInterval = 8
-    private let minimumConfidence = 0.75
-    private let activeSoundConfidence = 0.55
+    private let detectionRecordingDuration: TimeInterval = 4
+    private let minimumConfidence = 0.2
+    private let activeSoundConfidence = 0.35
     private let requiredConsecutiveMatches = 1
     private let detectionCooldown: TimeInterval = 6
     
@@ -63,11 +74,24 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     @Published var confidence: Double = 0.0
     @Published var latestDetection: SoundDetection?
     
-    func startListening() {
-        guard !audioEngine.isRunning else { return }
+    var isActivelyListening: Bool {
+        audioEngine.isRunning
+    }
+    
+    @discardableResult
+    func startListening() -> Bool {
+        if audioEngine.isRunning {
+            stopListening()
+        } else {
+            audioEngine.inputNode.removeTap(onBus: 0)
+            streamAnalyzer = nil
+            resetDetectionState()
+            clearAudioState()
+        }
+        
         guard let model = try? AuraSoundDetection(configuration: MLModelConfiguration()) else {
             print("Failed to load the Create ML model.")
-            return
+            return false
         }
         
         let mlModel = model.model
@@ -94,11 +118,18 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             
             resetDetectionState()
             clearAudioState()
+            audioEngine.prepare()
             try audioEngine.start()
             print("AI is now actively listening!")
+            return true
             
         } catch {
             print("Error starting AI: \(error.localizedDescription)")
+            audioEngine.inputNode.removeTap(onBus: 0)
+            streamAnalyzer = nil
+            resetDetectionState()
+            clearAudioState()
+            return false
         }
     }
     
@@ -138,7 +169,8 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         
         let detectedAt = Date()
         lastDetectionTimes[label] = detectedAt
-        startDetectionRecording(label: label, confidence: confidence, detectedAt: detectedAt)
+        let detectionID = startDetectionRecording(label: label, confidence: confidence, detectedAt: detectedAt) ?? UUID()
+        publishImmediateDetection(id: detectionID, label: label, confidence: confidence, detectedAt: detectedAt)
     }
     
     func request(_ request: SNRequest, didFailWithError error: Error) {
@@ -169,16 +201,24 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             || normalized == "other"
     }
     
-    private func startDetectionRecording(label: String, confidence: Double, detectedAt: Date) {
-        guard let format = recordingFormat else { return }
+    private func startDetectionRecording(label: String, confidence: Double, detectedAt: Date) -> UUID? {
+        guard let format = recordingFormat else { return nil }
         
         do {
+            let detectionID = UUID()
             let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fileName = "Aura_Detection_\(sanitizedFileName(label))_\(Int(detectedAt.timeIntervalSince1970)).caf"
+            let fileName = "Aura_Detection_\(sanitizedFileName(label))_\(Int(detectedAt.timeIntervalSince1970)).m4a"
             let fileURL = documentsDirectory.appendingPathComponent(fileName)
-            let audioFile = try AVAudioFile(forWriting: fileURL, settings: format.settings)
+            let settings: [String: Any] = [
+                AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+                AVSampleRateKey: format.sampleRate,
+                AVNumberOfChannelsKey: Int(format.channelCount),
+                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+            ]
+            let audioFile = try AVAudioFile(forWriting: fileURL, settings: settings)
             let targetFrameCount = AVAudioFramePosition(detectionRecordingDuration * format.sampleRate)
             var recording = PendingDetectionRecording(
+                id: detectionID,
                 label: label,
                 confidence: confidence,
                 detectedAt: detectedAt,
@@ -201,8 +241,10 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             }
             pendingDetectionRecording = recording
             audioBufferLock.unlock()
+            return detectionID
         } catch {
             print("Failed to start detection recording: \(error.localizedDescription)")
+            return nil
         }
     }
     
@@ -261,6 +303,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
                     timeline.append(TimelineNode(exactTime: recording.lastActiveAt, label: "Silence"))
                     
                     completedDetection = SoundDetection(
+                        id: recording.id,
                         name: recording.label,
                         confidence: recording.confidence,
                         timestamp: recording.detectedAt,
@@ -291,6 +334,20 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             self.latestDetection = detection
             print("AI Heard: \(detection.name) at \(Int(detection.confidence * 100))%")
         }
+    }
+    
+    private func publishImmediateDetection(id: UUID, label: String, confidence: Double, detectedAt: Date) {
+        publish(
+            SoundDetection(
+                id: id,
+                name: label,
+                confidence: confidence,
+                timestamp: detectedAt,
+                endedAt: detectedAt,
+                timeline: [TimelineNode(exactTime: detectedAt, label: contextStartLabel(for: label))],
+                audioFileURL: nil
+            )
+        )
     }
     
     private func copyAudioBuffer(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
