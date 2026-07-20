@@ -28,6 +28,8 @@ struct SoundDetailView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
+            AuraHeaderView()
+            
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")

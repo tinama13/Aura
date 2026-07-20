@@ -13,11 +13,9 @@ struct OnBoardingView: View {
     
     var body: some View {
         VStack {
-            // Header shown on every onboarding page: app name + Skip
-            HStack {
-                Text("Aura")
-                    .font(.custom("MarkerFelt-Thin", size: 24))
-                Spacer()
+            ZStack(alignment: .trailing) {
+                AuraHeaderView()
+                
                 Button("Skip") {
                     // Same effect as "Get Started" — marks onboarding done,
                     // so ContentView switches to the home screen
@@ -25,8 +23,8 @@ struct OnBoardingView: View {
                 }
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(Color(red: 0.85, green: 0.28, blue: 0.2))
+                .padding(.trailing, 24)
             }
-            .padding(.horizontal, 24)
             .padding(.top, 8)
 
             switch currentPage {

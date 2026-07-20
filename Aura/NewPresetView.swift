@@ -14,6 +14,22 @@ struct NewPresetView: View {
     
     @State private var presetName = ""
     @State private var selectedSounds = Set<String>()
+    @State private var selectedIcon = "star.fill"
+    
+    private let presetIcons = [
+        "star.fill",
+        "house.fill",
+        "car.fill",
+        "figure.walk",
+        "speaker.wave.2.fill",
+        "bell.fill",
+        "moon.fill",
+        "sun.max.fill",
+        "briefcase.fill",
+        "book.fill",
+        "heart.fill",
+        "person.fill"
+    ]
     
     private var sortedSounds: [Sound] {
         soundManager.sounds.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
@@ -21,6 +37,8 @@ struct NewPresetView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            AuraHeaderView()
+            
             HStack {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")
@@ -53,6 +71,29 @@ struct NewPresetView: View {
                             .padding()
                             .background(Color(white: 0.95))
                             .cornerRadius(12)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Preset Symbol")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.gray)
+                        
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4), spacing: 10) {
+                            ForEach(presetIcons, id: \.self) { iconName in
+                                Button {
+                                    selectedIcon = iconName
+                                } label: {
+                                    Image(systemName: iconName)
+                                        .font(.system(size: 24, weight: .semibold))
+                                        .foregroundColor(selectedIcon == iconName ? .white : .black)
+                                        .frame(maxWidth: .infinity)
+                                        .frame(height: 48)
+                                        .background(selectedIcon == iconName ? Color(red: 0.204, green: 0.678, blue: 0.914) : Color(white: 0.95))
+                                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
                     }
                     
                     VStack(alignment: .leading, spacing: 8) {
@@ -105,7 +146,7 @@ struct NewPresetView: View {
                 Button(action: {
                     presetManager.createNewPreset(
                         title: presetName,
-                        icon: "star.fill",
+                        icon: selectedIcon,
                         sounds: selectedSounds
                     )
                     dismiss()
@@ -115,7 +156,7 @@ struct NewPresetView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(presetName.isEmpty ? Color.gray : Color.black)
+                        .background(presetName.isEmpty ? Color.gray : Color(red: 0.42, green: 0.29, blue: 0.72))
                         .cornerRadius(12)
                 }
                 .disabled(presetName.isEmpty)
