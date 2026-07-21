@@ -65,7 +65,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     private var lastDetectionTimes: [String: Date] = [:]
     
     private let detectionRecordingDuration: TimeInterval = 4
-    private let minimumConfidence = 0.2
+    private let minimumConfidence = 0.85
     private let activeSoundConfidence = 0.35
     private let requiredConsecutiveMatches = 1
     private let detectionCooldown: TimeInterval = 6
@@ -89,15 +89,8 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             clearAudioState()
         }
         
-        guard let model = try? AuraSoundDetection(configuration: MLModelConfiguration()) else {
-            print("Failed to load the Create ML model.")
-            return false
-        }
-        
-        let mlModel = model.model
-        
         do {
-            let request = try SNClassifySoundRequest(mlModel: mlModel)
+            let request = try SNClassifySoundRequest(classifierIdentifier: .version1)
             request.overlapFactor = 0.5
             
             let audioSession = AVAudioSession.sharedInstance()
@@ -383,7 +376,6 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     
     private func contextStartLabel(for label: String) -> String {
         let normalized = label.lowercased()
-        if normalized.contains("dog") { return "a dog barking nearby" }
         if normalized.contains("alarm") || normalized.contains("siren") { return "an alarm or siren starting nearby" }
         if normalized.contains("horn") { return "a car horn sounding nearby" }
         if normalized.contains("glass") { return "a sharp glass-breaking sound" }
@@ -394,7 +386,6 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     
     private func contextQuietingLabel(for label: String) -> String {
         let normalized = label.lowercased()
-        if normalized.contains("dog") { return "the barking started to fade" }
         if normalized.contains("alarm") || normalized.contains("siren") { return "the alarm began to quiet down" }
         if normalized.contains("horn") { return "the horn faded out" }
         if normalized.contains("baby") { return "the crying softened" }

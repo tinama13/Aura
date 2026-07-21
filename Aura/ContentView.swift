@@ -30,11 +30,8 @@ struct ContentView: View {
     @EnvironmentObject var historyManager: HistoryManager
     @EnvironmentObject var listeningManager: ListeningManager
     @State private var current_tab: Tab = .home
-    @State private var showAlert = false
-    @State private var currentAlertSound = ""
-    @State private var pendingEvent: DetectedEvent?
-    @State private var eventToOpen: DetectedEvent?
     @State private var tutorialStep: AuraTutorialStep?
+    @State private var eventToOpen: DetectedEvent?
 
     var body: some View {
         NavigationStack {
@@ -50,28 +47,9 @@ struct ContentView: View {
                     }
                 }
                 .padding(.bottom, 90)
+                
                 NavBar(current_tab: $current_tab)
                     .allowsHitTesting(tutorialStep == nil)
-                
-                if showAlert {
-                    ZStack {
-                        Color.black.opacity(0.28)
-                            .ignoresSafeArea()
-                        
-                        AlertPopupView(
-                            soundName: currentAlertSound,
-                            onDismiss: { withAnimation { showAlert = false } },
-                            onViewDetails: {
-                                eventToOpen = pendingEvent
-                                withAnimation { showAlert = false }
-                            },
-                            onReadWarning: {}
-                        )
-                        .transition(.scale.combined(with: .opacity))
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .zIndex(2)
-                }
                 
                 if let tutorialStep {
                     AuraTutorialOverlay(
@@ -85,17 +63,6 @@ struct ContentView: View {
             .edgesIgnoringSafeArea(.bottom)
             .navigationDestination(item: $eventToOpen) { event in
                 EventTimelineView(event: event)
-            }
-        }
-        .onChange(of: listeningManager.latestAcceptedEvent) { oldValue, newValue in
-            guard let event = newValue else { return }
-            currentAlertSound = listeningManager.latestAlertSound
-            pendingEvent = event
-            if isAlarmSound(event.name) {
-                triggerAlarmVibration()
-            }
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                showAlert = true
             }
         }
         .onChange(of: scenePhase) { oldValue, newValue in
@@ -151,23 +118,7 @@ struct ContentView: View {
         }
         UserDefaults.standard.removeObject(forKey: "pendingNotificationEventID")
         current_tab = .home
-        showAlert = false
         eventToOpen = event
-    }
-    
-    private func isAlarmSound(_ soundName: String) -> Bool {
-        let normalizedName = soundName.lowercased()
-        return normalizedName.contains("alarm")
-            || normalizedName.contains("siren")
-            || normalizedName.contains("smoke")
-            || normalizedName.contains("emergency")
-    }
-    
-    private func triggerAlarmVibration() {
-        let feedbackGenerator = UINotificationFeedbackGenerator()
-        feedbackGenerator.prepare()
-        feedbackGenerator.notificationOccurred(.warning)
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
     }
     
     private func startTutorial() {

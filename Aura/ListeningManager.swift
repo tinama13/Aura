@@ -3,6 +3,7 @@ import AVFoundation
 import Foundation
 import UserNotifications
 import WidgetKit
+import SwiftUI
 
 @MainActor
 final class ListeningManager: ObservableObject {
@@ -22,18 +23,20 @@ final class ListeningManager: ObservableObject {
             UserDefaults(suiteName: "group.app.tinama.aura") ?? .standard
         }
     }
-
+    
     @Published private(set) var isListening = false
     @Published private(set) var latestDetection: SoundDetection?
     @Published private(set) var latestAcceptedEvent: DetectedEvent?
     @Published private(set) var latestAlertSound = ""
-
+    
+    private var alertCooldowns: [String: Date] = [:]
+    private var globalLastAlert: Date? = nil
     private let recognizer = SoundRecognizer()
     private var cancellables = Set<AnyCancellable>()
     private weak var controlPresetManager: PresetManager?
     private weak var historyManager: HistoryManager?
     private let listeningNotificationIdentifier = "AuraBackgroundListening"
-
+    
     private init() {
         recognizer.$latestDetection
             .receive(on: DispatchQueue.main)
@@ -78,7 +81,7 @@ final class ListeningManager: ObservableObject {
             .deliverImmediately
         )
     }
-
+    
     func startListening() {
         if isListening {
             ControlStorage.defaults.set(true, forKey: ControlStorage.isListeningKey)
@@ -90,14 +93,13 @@ final class ListeningManager: ObservableObject {
             isListening = true
             ControlStorage.defaults.set(true, forKey: ControlStorage.isListeningKey)
             reloadListeningControl()
-            requestNotificationPermissionAndShowListeningNotification()
-        } else {
+            } else {
             isListening = false
             ControlStorage.defaults.set(false, forKey: ControlStorage.isListeningKey)
             reloadListeningControl()
         }
     }
-
+    
     func stopListening() {
         guard isListening else { return }
         isListening = false
@@ -132,7 +134,7 @@ final class ListeningManager: ObservableObject {
             reloadListeningControl()
         }
     }
-
+    
     func toggleListening() {
         if isListening {
             stopListening()
@@ -199,6 +201,19 @@ final class ListeningManager: ObservableObject {
     
     func processDetection(_ detection: SoundDetection, presetManager: PresetManager, historyManager: HistoryManager) {
         let displayName = formattedSoundName(detection.name)
+        
+        if historyManager.containsEvent(id: detection.id) {
+            _ = historyManager.logEvent(
+                id: detection.id,
+                name: displayName,
+                timestamp: detection.timestamp,
+                endedAt: detection.endedAt,
+                timeline: detection.timeline,
+                audioFileURL: detection.audioFileURL
+            )
+            return
+        }
+        
         guard isEnabled(displayName, in: presetManager) else {
             if let audioFileURL = detection.audioFileURL {
                 try? FileManager.default.removeItem(at: audioFileURL)
@@ -206,7 +221,22 @@ final class ListeningManager: ObservableObject {
             return
         }
         
-        let isNewEvent = !historyManager.containsEvent(id: detection.id)
+        let now = Date()
+        
+        if let globalTime = globalLastAlert, now.timeIntervalSince(globalTime) < 5 {
+            if let audioFileURL = detection.audioFileURL { try? FileManager.default.removeItem(at: audioFileURL) }
+            return
+        }
+        
+        let soundKey = normalizedSoundName(detection.name)
+        if let lastAlertTime = alertCooldowns[soundKey], now.timeIntervalSince(lastAlertTime) < 180 {
+            if let audioFileURL = detection.audioFileURL { try? FileManager.default.removeItem(at: audioFileURL) }
+            return
+        }
+        
+        alertCooldowns[soundKey] = now
+        globalLastAlert = now
+        
         let newEvent = historyManager.logEvent(
             id: detection.id,
             name: displayName,
@@ -215,12 +245,13 @@ final class ListeningManager: ObservableObject {
             timeline: detection.timeline,
             audioFileURL: detection.audioFileURL
         )
-        guard isNewEvent else { return }
         latestAlertSound = displayName
         latestAcceptedEvent = newEvent
-        requestNotificationPermissionAndSendDetectionNotification(event: newEvent)
+        if UIApplication.shared.applicationState != .active {
+                    requestNotificationPermissionAndSendDetectionNotification(event: newEvent)
+                }
     }
-
+    
     static func registerNotificationActions() {
         let stopAction = UNNotificationAction(
             identifier: "STOP_LISTENING",
@@ -235,14 +266,14 @@ final class ListeningManager: ObservableObject {
         )
         UNUserNotificationCenter.current().setNotificationCategories([category])
     }
-
+    
     private func showBackgroundListeningNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Aura is now listening"
         content.body = ""
         content.sound = nil
         content.categoryIdentifier = "LISTENING_STATUS"
-
+        
         let request = UNNotificationRequest(
             identifier: listeningNotificationIdentifier,
             content: content,
@@ -304,9 +335,9 @@ final class ListeningManager: ObservableObject {
             let normalizedActiveSound = normalizedSoundName(activeSound)
             let activeKeywords = soundKeywords(for: activeSound)
             return normalizedActiveSound == normalizedDetection
-                || normalizedActiveSound.contains(normalizedDetection)
-                || normalizedDetection.contains(normalizedActiveSound)
-                || !detectionKeywords.isDisjoint(with: activeKeywords)
+            || normalizedActiveSound.contains(normalizedDetection)
+            || normalizedDetection.contains(normalizedActiveSound)
+            || !detectionKeywords.isDisjoint(with: activeKeywords)
         }
     }
     

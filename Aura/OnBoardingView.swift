@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import AVFoundation
+import UserNotifications
 
 struct OnBoardingView: View {
     @Binding var hasCompletedOnboarding: Bool
@@ -17,8 +19,6 @@ struct OnBoardingView: View {
                 AuraHeaderView()
                 
                 Button("Skip") {
-                    // Same effect as "Get Started" — marks onboarding done,
-                    // so ContentView switches to the home screen
                     hasCompletedOnboarding = true
                 }
                 .font(.system(size: 14, weight: .bold))
@@ -50,15 +50,39 @@ struct OnBoardingView: View {
                     title: "Aura Needs to Listen",
                     description: "We use your microphone to detect sounds in real time. Everything is processed on your device - audio never leaves your phone.",
                     buttonText: "Next",
-                    action: { currentPage += 1 }
+                    action: {
+                        requestMicrophonePermission()
+                        currentPage += 1
+                    }
                 )
             case 3:
-                OnBoardingPageView(image: "aura-presets", title: "Pick how you'll use Aura", description: "Choose a mode to get alerts tailored to what you are doing. You can change this anytime.", buttonText: "Get Started", action: { hasCompletedOnboarding = true})
+                OnBoardingPageView(
+                    image: "aura-presets",
+                    title: "Pick how you'll use Aura",
+                    description: "Choose a mode to get alerts tailored to what you are doing. You can change this anytime.",
+                    buttonText: "Get Started",
+                    action: {
+                        requestNotificationPermission()
+                        hasCompletedOnboarding = true
+                    }
+                )
             default:
                 EmptyView()
             }
             PageDots(total: 4, current: currentPage)
         }
+    }
+    
+    private func requestMicrophonePermission() {
+        if #available(iOS 17.0, *) {
+            AVAudioApplication.requestRecordPermission { _ in }
+        } else {
+            AVAudioSession.sharedInstance().requestRecordPermission { _ in }
+        }
+    }
+    
+    private func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
 }
 
@@ -80,6 +104,5 @@ struct PageDots: View {
 
 
 #Preview {
-    // .constant(false) makes a fake binding just for the preview
     OnBoardingView(hasCompletedOnboarding: .constant(false))
 }

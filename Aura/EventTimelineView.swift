@@ -12,12 +12,19 @@ import Combine
 struct EventTimelineView: View {
     let event: DetectedEvent
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var historyManager: HistoryManager
+    @EnvironmentObject var listeningManager: ListeningManager
     
     @StateObject private var audioPlayer = EventAudioPlayer()
     @StateObject private var narrator = EventNarrator()
+    @State private var wasListeningBeforeMediaPlayback = false
+    
+    private var currentEvent: DetectedEvent {
+        historyManager.events.first(where: { $0.id == event.id }) ?? event
+    }
     
     private var eventSummaryText: String {
-        let contextLabels = event.timeline
+        let contextLabels = currentEvent.timeline
             .filter { !$0.isSilence }
             .map(\.label)
             .reduce(into: [String]()) { labels, label in
@@ -26,12 +33,12 @@ struct EventTimelineView: View {
                 }
             }
         
-        let opening = contextLabels.first ?? "\(event.name) was detected"
+        let opening = contextLabels.first ?? "\(currentEvent.name) was detected"
         var summary = "Aura heard \(opening.lowercased())."
         
-        if let durationText = event.durationText, let silenceText = event.silenceText {
+        if let durationText = currentEvent.durationText, let silenceText = currentEvent.silenceText {
             summary += " \(durationText), and \(silenceText.lowercased())."
-        } else if let durationText = event.durationText {
+        } else if let durationText = currentEvent.durationText {
             summary += " \(durationText)."
         }
         
@@ -43,6 +50,20 @@ struct EventTimelineView: View {
         }
         
         return summary
+    }
+    
+    private func pauseListeningForMediaIfNeeded() {
+        wasListeningBeforeMediaPlayback = listeningManager.isListening
+        if listeningManager.isListening {
+            listeningManager.toggleListening()
+        }
+    }
+    
+    private func resumeListeningIfMediaFinished() {
+        guard wasListeningBeforeMediaPlayback else { return }
+        guard !audioPlayer.isPlaying && !narrator.isSpeaking else { return }
+        guard !listeningManager.isListening else { return }
+        listeningManager.startListening()
     }
     
     var body: some View {
@@ -65,16 +86,19 @@ struct EventTimelineView: View {
             .padding(.vertical, 20)
             
             VStack(spacing: 12) {
-                Text(event.name)
+                Text(currentEvent.name)
                     .font(.system(size: 28, weight: .bold))
                     .multilineTextAlignment(.center)
                 
-                Text(event.timestamp, style: .date)
+                Text(currentEvent.timestamp, style: .date)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.gray)
                 
                 Button {
-                    audioPlayer.togglePlayback(url: event.audioFileURL)
+                    if !audioPlayer.isPlaying {
+                        pauseListeningForMediaIfNeeded()
+                    }
+                    audioPlayer.togglePlayback(url: currentEvent.audioFileURL)
                 } label: {
                     HStack {
                         Image(systemName: audioPlayer.isPlaying ? "stop.fill" : "play.fill")
@@ -88,8 +112,8 @@ struct EventTimelineView: View {
                     .clipShape(Capsule())
                 }
                 .padding(.top, 14)
-                .disabled(event.audioFileURL == nil)
-                .opacity(event.audioFileURL == nil ? 0.4 : 1.0)
+                .disabled(currentEvent.audioFileURL == nil)
+                .opacity(currentEvent.audioFileURL == nil ? 0.4 : 1.0)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 26)
@@ -108,6 +132,9 @@ struct EventTimelineView: View {
             Spacer(minLength: 16)
             
             Button {
+                if !narrator.isSpeaking {
+                    pauseListeningForMediaIfNeeded()
+                }
                 narrator.toggleReading(eventSummaryText)
             } label: {
                 HStack(spacing: 10) {
@@ -125,9 +152,20 @@ struct EventTimelineView: View {
             .padding(.bottom, 34)
         }
         .navigationBarBackButtonHidden(true)
+        .onChange(of: narrator.isSpeaking) { oldValue, newValue in
+            if oldValue == true && newValue == false {
+                resumeListeningIfMediaFinished()
+            }
+        }
+        .onChange(of: audioPlayer.isPlaying) { oldValue, newValue in
+            if oldValue == true && newValue == false {
+                resumeListeningIfMediaFinished()
+            }
+        }
         .onDisappear {
             narrator.stopReading()
             audioPlayer.stopPlayback()
+            resumeListeningIfMediaFinished()
         }
     }
 }
@@ -150,9 +188,8 @@ class EventAudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         } else {
             do {
                 let audioSession = AVAudioSession.sharedInstance()
-                try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothHFP])
+                try audioSession.setCategory(.playback, mode: .default, options: [])
                 try audioSession.setActive(true)
-                try audioSession.overrideOutputAudioPort(.speaker)
                 
                 do {
                     if try playWithAudioEngine(url: url) {
@@ -304,4 +341,6 @@ class EventNarrator: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
         audioFileURL: nil
     )
     return EventTimelineView(event: mockEvent)
+        .environmentObject(HistoryManager())
+        .environmentObject(ListeningManager.shared)
 }

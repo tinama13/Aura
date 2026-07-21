@@ -46,6 +46,22 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     }
 }
 
+// Owns the onboarding gate and switches between OnBoardingView and the main
+// app (ContentView) based on it. This didn't exist before — nothing was ever
+// checking hasCompletedOnboarding, so OnBoardingView was unreachable no
+// matter what that flag was set to.
+struct RootView: View {
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    
+    var body: some View {
+        if hasCompletedOnboarding {
+            ContentView()
+        } else {
+            OnBoardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
+        }
+    }
+}
+
 @main
 struct AuraApp: App {
     @StateObject private var soundManager = SoundManager()
@@ -61,7 +77,7 @@ struct AuraApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
                 .environmentObject(soundManager)
                 .environmentObject(presetManager)
                 .environmentObject(historyManager)

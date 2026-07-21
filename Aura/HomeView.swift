@@ -5,6 +5,16 @@ import Combine
 struct HomeView: View {
     @State private var isPulsing = false
     
+    @State private var showAlert = false
+    @State private var currentAlertSound = ""
+    @State private var eventToNavigateTo: DetectedEvent? = nil
+    @State private var pendingEvent: DetectedEvent? = nil
+    @State private var wasListeningBeforeReadWarning = false
+
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage("hasCompletedTutorial") private var hasCompletedTutorial = false
+    
+    @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject var presetManager: PresetManager
     @EnvironmentObject var historyManager: HistoryManager
     @EnvironmentObject var listeningManager: ListeningManager
@@ -17,7 +27,8 @@ struct HomeView: View {
                         AuraHeaderView()
                         
                         Button {
-                            NotificationCenter.default.post(name: .auraRestartTutorial, object: nil)
+                            hasCompletedTutorial = false
+                            hasCompletedOnboarding = false
                         } label: {
                             Image(systemName: "arrow.counterclockwise")
                                 .font(.system(size: 18, weight: .bold))
@@ -138,47 +149,55 @@ struct HomeView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color.white)
+                .opacity(showAlert ? 0.3 : 1.0)
+                
+                if showAlert {
+                    AlertPopupView(
+                        soundName: currentAlertSound,
+                        onDismiss: { withAnimation { showAlert = false } },
+                        onViewDetails: {
+                            self.eventToNavigateTo = self.pendingEvent
+                            withAnimation { showAlert = false }
+                        },
+                        onReadWarning: {
+                            wasListeningBeforeReadWarning = listeningManager.isListening
+                            if listeningManager.isListening {
+                                listeningManager.toggleListening()
+                                isPulsing = false
+                            }
+                        },
+                        onReadingFinished: {
+                            if wasListeningBeforeReadWarning && !listeningManager.isListening {
+                                listeningManager.startListening()
+                            }
+                        }
+                    )
+                    .transition(.scale.combined(with: .opacity))
+                    .zIndex(1)
+                }
+            }
+            .navigationDestination(item: $eventToNavigateTo) { event in
+                EventTimelineView(event: event)
             }
         }
-        
         .onAppear {
-            requestNotificationPermission()
             listeningManager.resumeListeningIfNeeded()
         }
         .onChange(of: listeningManager.isListening) { oldValue, newValue in
             isPulsing = newValue
         }
-    }
-    
-    private func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in }
-    }
-    
-    private func isEnabledInActivePreset(_ detectedSound: String) -> Bool {
-        let activeSounds = (presetManager.selectedSounds[presetManager.activePresetID] ?? Set(presetManager.activePreset.defaultSounds))
-            .union(presetManager.activePreset.defaultSounds)
-        let normalizedDetection = normalizedSoundName(detectedSound)
-        
-        return activeSounds.contains { activeSound in
-            let normalizedActiveSound = normalizedSoundName(activeSound)
-            return normalizedActiveSound == normalizedDetection
-                || normalizedActiveSound.contains(normalizedDetection)
-                || normalizedDetection.contains(normalizedActiveSound)
-        }
-    }
-    
-    private func normalizedSoundName(_ name: String) -> String {
-        name.lowercased().filter { $0.isLetter || $0.isNumber }
-    }
-    
-    private func formattedSoundName(_ name: String) -> String {
-        name
-            .replacingOccurrences(of: "_", with: " ")
-            .split(separator: " ")
-            .map { word in
-                word.prefix(1).uppercased() + word.dropFirst().lowercased()
+        .onChange(of: listeningManager.latestAcceptedEvent) { oldValue, newEvent in
+            guard let event = newEvent else { return }
+            
+            guard !showAlert else { return }
+            
+            self.pendingEvent = event
+            self.currentAlertSound = event.name
+            
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                self.showAlert = true
             }
-            .joined(separator: " ")
+        }
     }
 }
 
@@ -187,6 +206,7 @@ struct AlertPopupView: View {
     var onDismiss: () -> Void
     var onViewDetails: () -> Void
     var onReadWarning: () -> Void
+    var onReadingFinished: () -> Void
     
     @StateObject private var narrator = EventNarrator()
     
@@ -266,6 +286,11 @@ struct AlertPopupView: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
         }
+        .onChange(of: narrator.isSpeaking) { oldValue, newValue in
+            if oldValue == true && newValue == false {
+                onReadingFinished()
+            }
+        }
         .onDisappear {
             narrator.stopReading()
         }
@@ -274,11 +299,4 @@ struct AlertPopupView: View {
         .cornerRadius(20)
         .shadow(color: Color.black.opacity(0.15), radius: 20, x: 0, y: 10)
     }
-}
-
-#Preview {
-    HomeView()
-        .environmentObject(SoundManager())
-        .environmentObject(PresetManager())
-        .environmentObject(HistoryManager())
 }
