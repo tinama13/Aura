@@ -9,7 +9,7 @@ struct HomeView: View {
     @State private var eventToNavigateTo: DetectedEvent? = nil
     @State private var pendingEvent: DetectedEvent? = nil
     @State private var wasListeningBeforeReadWarning = false
-
+    
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("hasCompletedTutorial") private var hasCompletedTutorial = false
     
@@ -193,7 +193,6 @@ struct HomeView: View {
         .onChange(of: listeningManager.isListening) { oldValue, newValue in
             isPulsing = newValue
         }
-<<<<<<< HEAD
         .onChange(of: listeningManager.latestAcceptedEvent) { oldValue, newEvent in
             guard let event = newEvent else { return }
             
@@ -204,33 +203,6 @@ struct HomeView: View {
             
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 self.showAlert = true
-=======
-    }
-    
-    private func isEnabledInActivePreset(_ detectedSound: String) -> Bool {
-        let activeSounds = (presetManager.selectedSounds[presetManager.activePresetID] ?? Set(presetManager.activePreset.defaultSounds))
-            .union(presetManager.activePreset.defaultSounds)
-        let normalizedDetection = normalizedSoundName(detectedSound)
-        
-        return activeSounds.contains { activeSound in
-            let normalizedActiveSound = normalizedSoundName(activeSound)
-            return normalizedActiveSound == normalizedDetection
-                || normalizedActiveSound.contains(normalizedDetection)
-                || normalizedDetection.contains(normalizedActiveSound)
-        }
-    }
-    
-    private func normalizedSoundName(_ name: String) -> String {
-        name.lowercased().filter { $0.isLetter || $0.isNumber }
-    }
-    
-    private func formattedSoundName(_ name: String) -> String {
-        name
-            .replacingOccurrences(of: "_", with: " ")
-            .split(separator: " ")
-            .map { word in
-                word.prefix(1).uppercased() + word.dropFirst().lowercased()
->>>>>>> origin/joseph
             }
         }
     }

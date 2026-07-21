@@ -1,0 +1,24 @@
+{
+    "fileFormatVersion": "1.0.0",
+    "itemInfoEntries": {
+        "10C90510-07F0-45E1-BFA0-8679975F61AD": {
+            "author": "com.apple.CoreML",
+            "description": "External Metadata Overlay",
+            "name": "Metadata.json",
+            "path": "com.apple.CoreML/Metadata.json"
+        },
+        "87100DFA-ACD6-41A8-8676-9A683CD7F857": {
+            "author": "com.apple.CoreML",
+            "description": "CoreML Model Specification",
+            "name": "AuraSoundDetection.mlmodel",
+            "path": "com.apple.CoreML/AuraSoundDetection.mlmodel"
+        },
+        "D174D298-F5A9-40FB-8F8D-27D4AFBF2762": {
+            "author": "com.apple.CoreML",
+            "description": "External FeatureDescription Overlay",
+            "name": "FeatureDescriptions.json",
+            "path": "com.apple.CoreML/FeatureDescriptions.json"
+        }
+    },
+    "rootModelIdentifier": "87100DFA-ACD6-41A8-8676-9A683CD7F857"
+}

@@ -1,0 +1,1956 @@
+{
+  "activityEntities" : [
+    "trainingDataAdded",
+    [
+      {
+        "createdDate" : "2026-07-21T04:43:02Z",
+        "event" : "trainingDataAdded",
+        "id" : "63EE4962-304A-4ACD-BA35-BB028A872E12",
+        "subtitle" : "Training_Data",
+        "title" : "Training Data Added"
+      }
+    ],
+    "trainingStarted",
+    [
+      {
+        "createdDate" : "2026-07-21T04:44:03Z",
+        "event" : "trainingStarted",
+        "id" : "BE90DB75-4F73-43E4-B7E0-A4B0F1FB05A2",
+        "subtitle" : "105 iterations",
+        "title" : "Training Started"
+      }
+    ],
+    "experimentCreated",
+    [
+      {
+        "createdDate" : "2026-07-21T04:42:57Z",
+        "event" : "experimentCreated",
+        "id" : "83B92128-B3B4-46A0-9A7C-4CD1F7F63F40",
+        "subtitle" : "AuraSoundDetection 5",
+        "title" : "Model Source Created"
+      }
+    ],
+    "trainingFinished",
+    [
+      {
+        "createdDate" : "2026-07-21T04:44:08Z",
+        "event" : "trainingFinished",
+        "id" : "868F6D3C-2F13-4199-BD34-34009EDE6DB0",
+        "subtitle" : "Model converged at 19 iterations",
+        "title" : "Training Completed"
+      }
+    ]
+  ],
+  "contentDataResult" : {
+    "createdDate" : "2026-07-21T04:42:57Z"
+  },
+  "createdDate" : "2026-07-21T04:42:57Z",
+  "evaluationContainerEntity" : {
+    "createdDate" : "2026-07-21T04:44:08Z",
+    "evaluationEntities" : [
+      {
+        "analysedDataType" : "none",
+        "createdDate" : "2026-07-21T04:44:08Z",
+        "dataResult" : {
+
+        },
+        "id" : "8e1c6715-b15d-4399-b182-8a8963379af0"
+      }
+    ],
+    "id" : "53753490-76fe-4d0c-b68d-11490a191649",
+    "modifiedDate" : "2026-07-21T04:44:08Z",
+    "previewType" : "soundClassifier",
+    "testingEvaluationEntity" : {
+      "analysedDataType" : "none",
+      "createdDate" : "2026-07-21T04:42:57Z",
+      "dataResult" : {
+        "createdDate" : "2026-07-21T04:42:57Z"
+      },
+      "id" : "025a72a8-abbc-4035-a4c6-9f869fd91e28"
+    },
+    "trainingEvaluationEntity" : {
+      "analysedDataType" : "none",
+      "createdDate" : "2026-07-21T04:42:57Z",
+      "dataResult" : {
+        "classesCount" : 3,
+        "createdDate" : "2026-07-21T04:42:57Z",
+        "dataAnalysis" : {
+          "classifierAnalysis" : {
+            "details" : [
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-horn-93439.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horns-73144.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-bark-382732.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-midnight-clock-17255.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/mehmetfaal1991-turkish-dog-barking-at-night-16300.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-barking-dog-6980.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-barking-sound-effect-427408.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-back-garden-ambience-76754.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-distant-horn-beeps-09-62142.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-underwater-white-noise-46423.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-2000-nissan-maxima-car-horn-72828.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-klakson-telolet-indonesian-big-bus-custom-horn-31303.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-growling-and-barking-dog-33310.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/spinopel-barking-of-a-small-dog-393124.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-car-horn-153261.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-ambientsound-27920.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-car-horn-02-153260.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-beep-beep-two-beeps-honk-honk-6188.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/263759__darthbaul__dog-barking-in-mountains.wav",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-white-noise-sweep-up-85276.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-45511.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-dead-air-61128.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/ambient_house-dog-barking-332832.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-small-quiet-street-ambience-57624.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-075714_la-cucaracha-car-hornwav-80095.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/612858__weak_hero__dog.wav",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/spinopel-market-background-noise-281247.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/49053354-old-car-horn-2-306421.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-sharp-horn-92676.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/soul_serenity_sounds-ambient-noise-236388.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/861228__beaconstudio__noise3-ambience.wav",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-large-empty-church-hall-silence-ambiance-air-tone-buzz-noise-29996.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/49053354-old-car-horn-305817.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-4-189858.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-ambience-near-forest-area-56946.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/861227__beaconstudio__noise2-hum.wav",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn_eu3-36554.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/861232__beaconstudio__noise-6-helicopter-rumble.wav",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-vintage-car-horn-153264.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-two-dogs-barking-71633.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/u_vshmonplts-crowd-noise-390947.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-90973.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/749352__wateenfotos__barking-ines-3.wav",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-respiration-woman-7018.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/alex_jauk-dog-running-amp-barking-404938.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dbsound-dog-barking-in-distant-502555.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-37932.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-double-car-honk-352443.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-vintage-car-horn-153262.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-small-barking-angrily-medium-close-cuba-72513.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesounds123-car-horn-338827.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barking-72300.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-2-189856.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-comedic-silence-90574.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/861231__beaconstudio__noise-5-high-hiss.wav",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-refrigerator-37431.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/wings_of_freedom-quiet-sound-426142.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-mercury-marquis-36979.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/zehendrew-calm-rain-528409.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/dragon-studio-clown-car-horn-487659.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/photos-dog-barking-in-the-distance-395349.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/180977__superstudiobr__barking-dog.wav",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-071078_husky-dog-barking-and-quottalkingquot-38761.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-044197_2013-dodge-charger-car-horn-wav-72822.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-background-noise-45700.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/dragon-studio-soothing-white-noise-323619.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-1-189855.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/861226__beaconstudio__noise1-hiss.wav",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-computer-fan-25659.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/extrasounds-white-noise-358382.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/susan-lu4esm-bocina-auto-436979.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/solarmusic-big-dog-bark-distant-113701.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/alex_jauk-large-dog-barking-529367.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barking-101729.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-honk-mus-152-94478.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-white-noise-6971.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/blendertimer-white-noise-8117.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dogs-barking-01-494305.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-automobile-horn-02-352065.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-6408.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-camry-horn-103641.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-radio-static-6382.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-barking-dog-cute-sound-463192.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-3-191449.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-40205.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-town-ambience-31063.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-distant-dog-barking-472373.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/kai_audio-bedroom-room-tone-446021.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-barking-406629.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-roomtone-bedroom-small-quiet-6754.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/koiroylers-car-horn-355971.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/dragon-studio-car-honk-386166.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/tomas_herudek-heartbeat-slow-quiet-and-simple-529662.mp3",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/spinopel-guard-dog-barking-456325.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-bark-sfx-450453.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/silence/861230__beaconstudio__noise-4-crescendo-hum.wav",
+              [
+                "silence"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/spinopel-small-dog-barking-381828.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/ambient_house-car-horn-sounding-off-in-the-distance-342177.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/flutie8211-car-horn-honking-413906.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-83351.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barks-75750.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/scottishperson-sound-effect-dog-barking-and-growling-03-367318.mp3",
+              [
+                "dog_barking"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/digitalstore07-horn-430368.mp3",
+              [
+                "car_horns"
+              ],
+              "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-free-dog-bark-419014.mp3",
+              [
+                "dog_barking"
+              ]
+            ],
+            "labelStats" : {
+              "car_horns" : 39,
+              "dog_barking" : 31,
+              "silence" : 34
+            }
+          },
+          "issues" : [
+            {
+              "description" : "3 classes found, including car_horns, silence, dog_barking",
+              "severity" : "debug"
+            },
+            {
+              "description" : "104 sounds found, automatically creating validation set",
+              "severity" : "good"
+            },
+            {
+              "description" : "Smallest class is \"dog_barking\" with 31 sounds",
+              "severity" : "debug"
+            },
+            {
+              "description" : "Largest class is \"car_horns\" with 39 sounds",
+              "severity" : "debug"
+            }
+          ],
+          "objectDetectorAnalysis" : {
+            "details" : {
+
+            }
+          },
+          "summary" : {
+            "canUseValidation" : 1,
+            "classCount" : 3,
+            "sampleCount" : 104
+          }
+        },
+        "dataSourceID" : "00A0A504-FA97-4030-9298-B0DD6A35C653",
+        "dataURL" : "file:///Users/tinama/Documents/Aura/Training_Data/",
+        "itemsCount" : 104
+      },
+      "dataSourceID" : "00A0A504-FA97-4030-9298-B0DD6A35C653",
+      "evaluationResult" : {
+        "soundClassifier" : {
+          "accuracy" : 0.9996581196581197,
+          "confusionMatrix" : [
+            {
+              "actual" : "car_horns",
+              "count" : 145,
+              "expected" : "car_horns"
+            },
+            {
+              "actual" : "car_horns",
+              "count" : 1,
+              "expected" : "silence"
+            },
+            {
+              "actual" : "dog_barking",
+              "count" : 522,
+              "expected" : "dog_barking"
+            },
+            {
+              "actual" : "silence",
+              "count" : 2257,
+              "expected" : "silence"
+            }
+          ],
+          "statsByLabel" : {
+            "car_horns" : {
+              "count" : 146,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 0.9931506849315068
+                }
+              }
+            },
+            "dog_barking" : {
+              "count" : 522,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "silence" : {
+              "count" : 2257,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0.9995571302037201,
+                  "recall" : 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "id" : "6f8bd562-dd21-45b8-ad4b-70f558f97f67"
+    },
+    "validationEvaluationEntity" : {
+      "analysedDataType" : "auto",
+      "createdDate" : "2026-07-21T04:42:57Z",
+      "dataResult" : {
+        "createdDate" : "2026-07-21T04:42:57Z"
+      },
+      "evaluationResult" : {
+        "soundClassifier" : {
+          "accuracy" : 0.9597069597069597,
+          "confusionMatrix" : [
+            {
+              "actual" : "car_horns",
+              "count" : 24,
+              "expected" : "car_horns"
+            },
+            {
+              "actual" : "car_horns",
+              "count" : 4,
+              "expected" : "dog_barking"
+            },
+            {
+              "actual" : "dog_barking",
+              "count" : 73,
+              "expected" : "dog_barking"
+            },
+            {
+              "actual" : "dog_barking",
+              "count" : 7,
+              "expected" : "silence"
+            },
+            {
+              "actual" : "silence",
+              "count" : 165,
+              "expected" : "silence"
+            }
+          ],
+          "statsByLabel" : {
+            "car_horns" : {
+              "count" : 28,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 0.8571428571428571
+                }
+              }
+            },
+            "dog_barking" : {
+              "count" : 80,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0.948051948051948,
+                  "recall" : 0.9125
+                }
+              }
+            },
+            "silence" : {
+              "count" : 165,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0.9593023255813954,
+                  "recall" : 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "id" : "88541350-eeb0-4828-a930-fa6747840a3f"
+    }
+  },
+  "evaluationEntity" : {
+    "analysedDataType" : "none",
+    "dataResult" : {
+
+    },
+    "id" : "96ffe306-18e2-4a6d-be1c-3af933e42b24"
+  },
+  "evaluationState" : "uninitialized",
+  "id" : "68A5CAE0-0E36-4E20-BF88-9F8F7D164CC8",
+  "modelEntity" : {
+    "createdDate" : "2026-07-21T04:42:57Z",
+    "experimentID" : "68A5CAE0-0E36-4E20-BF88-9F8F7D164CC8",
+    "id" : "325552DE-41E8-4AFA-844E-65E0A49978DA",
+    "modelURL" : "Models/AuraSoundDetection%205.mlmodel",
+    "modifiedDate" : "2026-07-21T04:42:57Z",
+    "title" : "",
+    "version" : "1.0"
+  },
+  "modifiedDate" : "2026-07-21T04:44:08Z",
+  "preferredFilename" : "AuraSoundDetection 5",
+  "settingEntity" : {
+    "algorithmType" : "maxEnt",
+    "augmentations" : [
+
+    ],
+    "featureNames" : [
+
+    ],
+    "handActionClassifierAugmentations" : [
+
+    ],
+    "handPoseClassifierAugmentations" : [
+
+    ],
+    "harVideoAugmentations" : 0,
+    "iterationCount" : 105,
+    "seedType" : "default",
+    "soundAlgorithmType" : "transferLearning",
+    "soundClassifierMLPLayers" : [
+      2
+    ],
+    "soundClassifierType" : "logisticRegressor",
+    "soundFeatureExtractionType" : "audioFeaturePrint",
+    "soundIsCustomOverlapFactor" : false,
+    "soundOverlapFactor" : 0.5,
+    "soundTimeWindow" : 1.575,
+    "styleTransferAlgorithmType" : "image",
+    "taskType" : "audioClassifier",
+    "transferLearningEmbeddingType" : "dynamic"
+  },
+  "snapshotRole" : {
+    "withoutSnapshots" : 0
+  },
+  "state" : "trained",
+  "title" : "AuraSoundDetection 5",
+  "trainingEntity" : {
+    "analysedDataType" : "datasource",
+    "checkpointMetrics" : {
+
+    },
+    "dataResult" : {
+      "classesCount" : 3,
+      "createdDate" : "2026-07-21T04:42:57Z",
+      "dataAnalysis" : {
+        "classifierAnalysis" : {
+          "details" : [
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-horn-93439.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horns-73144.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-bark-382732.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-midnight-clock-17255.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/mehmetfaal1991-turkish-dog-barking-at-night-16300.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-barking-dog-6980.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-barking-sound-effect-427408.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-back-garden-ambience-76754.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-distant-horn-beeps-09-62142.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-underwater-white-noise-46423.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-2000-nissan-maxima-car-horn-72828.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-klakson-telolet-indonesian-big-bus-custom-horn-31303.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-growling-and-barking-dog-33310.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/spinopel-barking-of-a-small-dog-393124.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-car-horn-153261.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-ambientsound-27920.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-car-horn-02-153260.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-beep-beep-two-beeps-honk-honk-6188.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/263759__darthbaul__dog-barking-in-mountains.wav",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-white-noise-sweep-up-85276.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-45511.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-dead-air-61128.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/ambient_house-dog-barking-332832.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-small-quiet-street-ambience-57624.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-075714_la-cucaracha-car-hornwav-80095.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/612858__weak_hero__dog.wav",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/spinopel-market-background-noise-281247.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/49053354-old-car-horn-2-306421.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-sharp-horn-92676.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/soul_serenity_sounds-ambient-noise-236388.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/861228__beaconstudio__noise3-ambience.wav",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-large-empty-church-hall-silence-ambiance-air-tone-buzz-noise-29996.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/49053354-old-car-horn-305817.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-4-189858.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-ambience-near-forest-area-56946.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/861227__beaconstudio__noise2-hum.wav",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn_eu3-36554.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/861232__beaconstudio__noise-6-helicopter-rumble.wav",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-vintage-car-horn-153264.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-two-dogs-barking-71633.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/u_vshmonplts-crowd-noise-390947.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-90973.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/749352__wateenfotos__barking-ines-3.wav",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-respiration-woman-7018.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/alex_jauk-dog-running-amp-barking-404938.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dbsound-dog-barking-in-distant-502555.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-37932.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-double-car-honk-352443.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-vintage-car-horn-153262.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-small-barking-angrily-medium-close-cuba-72513.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesounds123-car-horn-338827.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barking-72300.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-2-189856.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-comedic-silence-90574.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/861231__beaconstudio__noise-5-high-hiss.wav",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-refrigerator-37431.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/wings_of_freedom-quiet-sound-426142.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-mercury-marquis-36979.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/zehendrew-calm-rain-528409.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/dragon-studio-clown-car-horn-487659.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/photos-dog-barking-in-the-distance-395349.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/180977__superstudiobr__barking-dog.wav",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-071078_husky-dog-barking-and-quottalkingquot-38761.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-044197_2013-dodge-charger-car-horn-wav-72822.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-background-noise-45700.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/dragon-studio-soothing-white-noise-323619.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-1-189855.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/861226__beaconstudio__noise1-hiss.wav",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-computer-fan-25659.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/extrasounds-white-noise-358382.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/susan-lu4esm-bocina-auto-436979.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/solarmusic-big-dog-bark-distant-113701.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/alex_jauk-large-dog-barking-529367.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barking-101729.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-honk-mus-152-94478.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-white-noise-6971.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/blendertimer-white-noise-8117.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dogs-barking-01-494305.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-automobile-horn-02-352065.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-6408.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-camry-horn-103641.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-radio-static-6382.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-barking-dog-cute-sound-463192.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-3-191449.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-40205.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-town-ambience-31063.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-distant-dog-barking-472373.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/kai_audio-bedroom-room-tone-446021.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-barking-406629.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-roomtone-bedroom-small-quiet-6754.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/koiroylers-car-horn-355971.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/dragon-studio-car-honk-386166.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/tomas_herudek-heartbeat-slow-quiet-and-simple-529662.mp3",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/spinopel-guard-dog-barking-456325.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-bark-sfx-450453.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/silence/861230__beaconstudio__noise-4-crescendo-hum.wav",
+            [
+              "silence"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/spinopel-small-dog-barking-381828.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/ambient_house-car-horn-sounding-off-in-the-distance-342177.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/flutie8211-car-horn-honking-413906.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-83351.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barks-75750.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/scottishperson-sound-effect-dog-barking-and-growling-03-367318.mp3",
+            [
+              "dog_barking"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/digitalstore07-horn-430368.mp3",
+            [
+              "car_horns"
+            ],
+            "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-free-dog-bark-419014.mp3",
+            [
+              "dog_barking"
+            ]
+          ],
+          "labelStats" : {
+            "car_horns" : 39,
+            "dog_barking" : 31,
+            "silence" : 34
+          }
+        },
+        "issues" : [
+          {
+            "description" : "3 classes found, including car_horns, silence, dog_barking",
+            "severity" : "debug"
+          },
+          {
+            "description" : "104 sounds found, automatically creating validation set",
+            "severity" : "good"
+          },
+          {
+            "description" : "Smallest class is \"dog_barking\" with 31 sounds",
+            "severity" : "debug"
+          },
+          {
+            "description" : "Largest class is \"car_horns\" with 39 sounds",
+            "severity" : "debug"
+          }
+        ],
+        "objectDetectorAnalysis" : {
+          "details" : {
+
+          }
+        },
+        "summary" : {
+          "canUseValidation" : 1,
+          "classCount" : 3,
+          "sampleCount" : 104
+        }
+      },
+      "dataSourceID" : "00A0A504-FA97-4030-9298-B0DD6A35C653",
+      "dataURL" : "file:///Users/tinama/Documents/Aura/Training_Data/",
+      "itemsCount" : 104
+    },
+    "dataSourceID" : "00A0A504-FA97-4030-9298-B0DD6A35C653",
+    "featureExtractionCheckpointMayBeAvailable" : false,
+    "finishTime" : "2026-07-21T04:44:08Z",
+    "progress" : [
+      {
+        "count" : 0,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1
+      },
+      {
+        "count" : 1,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1
+      },
+      {
+        "count" : 2,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "scTrainingColumnHeader" : {
+          "elapsedTime" : 0.059213995933532715,
+          "hasValidation" : true,
+          "iterationCount" : 2,
+          "trainingAccuracy" : 0.7716239316239316,
+          "validationAccuracy" : 0.6043956043956044
+        },
+        "tableDone" : false,
+        "tableIndex" : 2
+      },
+      {
+        "count" : 3,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "scTrainingColumnHeader" : {
+          "elapsedTime" : 0.06365597248077393,
+          "hasValidation" : true,
+          "iterationCount" : 3,
+          "trainingAccuracy" : 0.7716239316239316,
+          "validationAccuracy" : 0.6043956043956044
+        },
+        "tableDone" : false,
+        "tableIndex" : 2
+      },
+      {
+        "count" : 4,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "scTrainingColumnHeader" : {
+          "elapsedTime" : 0.0708080530166626,
+          "hasValidation" : true,
+          "iterationCount" : 4,
+          "trainingAccuracy" : 0.8864957264957265,
+          "validationAccuracy" : 0.7435897435897436
+        },
+        "tableDone" : false,
+        "tableIndex" : 2
+      },
+      {
+        "count" : 5,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "scTrainingColumnHeader" : {
+          "elapsedTime" : 0.07462704181671143,
+          "hasValidation" : true,
+          "iterationCount" : 5,
+          "trainingAccuracy" : 0.8923076923076924,
+          "validationAccuracy" : 0.8021978021978022
+        },
+        "tableDone" : false,
+        "tableIndex" : 2
+      },
+      {
+        "count" : 6,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1
+      },
+      {
+        "count" : 7,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1
+      },
+      {
+        "count" : 8,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1
+      },
+      {
+        "count" : 9,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1
+      },
+      {
+        "count" : 10,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : true,
+        "tableIndex" : 1
+      },
+      {
+        "count" : 11,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "scTrainingColumnHeader" : {
+          "elapsedTime" : 0.09826302528381348,
+          "hasValidation" : true,
+          "iterationCount" : 11,
+          "trainingAccuracy" : 0.9894017094017094,
+          "validationAccuracy" : 0.9597069597069597
+        },
+        "tableDone" : false,
+        "tableIndex" : 2
+      },
+      {
+        "count" : 12,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 13,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 14,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 15,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 17,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 18,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 19,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "scTrainingColumnHeader" : {
+          "elapsedTime" : 0.13648998737335205,
+          "hasValidation" : true,
+          "iterationCount" : 19,
+          "trainingAccuracy" : 0.9996581196581197,
+          "validationAccuracy" : 0.9597069597069597
+        },
+        "tableDone" : true,
+        "tableIndex" : 2
+      },
+      {
+        "count" : 20,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 21,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 22,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 23,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 24,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 26,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 27,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 28,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 29,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 30,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 31,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 32,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 33,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 34,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 35,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 36,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 37,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 45,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 46,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 47,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 50,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 51,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 56,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 57,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 58,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 59,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 61,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 62,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 63,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 64,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 65,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 66,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 67,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 68,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 69,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 70,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 74,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 75,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 76,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 78,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 80,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 81,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 82,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 83,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 84,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 86,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 87,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 88,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 89,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 90,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 91,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 92,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 93,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 94,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : true,
+        "tableIndex" : 0
+      }
+    ],
+    "snapshottableCheckpoints" : {
+
+    },
+    "startTime" : "2026-07-21T04:44:03Z",
+    "trainingAccuracy" : 0.9996581196581197,
+    "trainingResults" : {
+      "soundClassifier" : {
+        "accuracy" : 0.9996581196581197,
+        "confusionMatrix" : [
+          {
+            "actual" : "car_horns",
+            "count" : 145,
+            "expected" : "car_horns"
+          },
+          {
+            "actual" : "car_horns",
+            "count" : 1,
+            "expected" : "silence"
+          },
+          {
+            "actual" : "dog_barking",
+            "count" : 522,
+            "expected" : "dog_barking"
+          },
+          {
+            "actual" : "silence",
+            "count" : 2257,
+            "expected" : "silence"
+          }
+        ],
+        "statsByLabel" : {
+          "car_horns" : {
+            "count" : 146,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 0.9931506849315068
+              }
+            }
+          },
+          "dog_barking" : {
+            "count" : 522,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "silence" : {
+            "count" : 2257,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0.9995571302037201,
+                "recall" : 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "validationAccuracy" : 0.9597069597069597,
+    "validationResults" : {
+      "soundClassifier" : {
+        "accuracy" : 0.9597069597069597,
+        "confusionMatrix" : [
+          {
+            "actual" : "car_horns",
+            "count" : 24,
+            "expected" : "car_horns"
+          },
+          {
+            "actual" : "car_horns",
+            "count" : 4,
+            "expected" : "dog_barking"
+          },
+          {
+            "actual" : "dog_barking",
+            "count" : 73,
+            "expected" : "dog_barking"
+          },
+          {
+            "actual" : "dog_barking",
+            "count" : 7,
+            "expected" : "silence"
+          },
+          {
+            "actual" : "silence",
+            "count" : 165,
+            "expected" : "silence"
+          }
+        ],
+        "statsByLabel" : {
+          "car_horns" : {
+            "count" : 28,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 0.8571428571428571
+              }
+            }
+          },
+          "dog_barking" : {
+            "count" : 80,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0.948051948051948,
+                "recall" : 0.9125
+              }
+            }
+          },
+          "silence" : {
+            "count" : 165,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0.9593023255813954,
+                "recall" : 1
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "validationEntity" : {
+    "analysedDataType" : "auto",
+    "dataResult" : {
+      "createdDate" : "2026-07-21T04:42:57Z"
+    },
+    "splitOptions" : {
+      "strategy" : {
+        "automatic" : {
+
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

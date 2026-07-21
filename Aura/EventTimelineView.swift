@@ -33,23 +33,13 @@ struct EventTimelineView: View {
                 }
             }
         
-<<<<<<< HEAD
         let opening = contextLabels.first ?? "\(currentEvent.name) was detected"
-        var summary = "Aura heard \(opening.lowercased())."
-        
-        if let durationText = currentEvent.durationText, let silenceText = currentEvent.silenceText {
-            summary += " \(durationText), and \(silenceText.lowercased())."
-        } else if let durationText = currentEvent.durationText {
-            summary += " \(durationText)."
-=======
-        let opening = contextLabels.first ?? "\(event.name) was detected"
         var summary = "Aura heard \(sentenceFragment(opening))."
         
-        if let durationText = event.durationText, let silenceText = event.silenceText {
+        if let durationText = currentEvent.durationText, let silenceText = currentEvent.silenceText {
             summary += " \(capitalizedSentence(durationText)). \(capitalizedSentence(silenceText))."
-        } else if let durationText = event.durationText {
+        } else if let durationText = currentEvent.durationText {
             summary += " \(capitalizedSentence(durationText))."
->>>>>>> origin/joseph
         }
         
         let extraContext = contextLabels.dropFirst().prefix(2)
@@ -62,7 +52,6 @@ struct EventTimelineView: View {
         return summary
     }
     
-<<<<<<< HEAD
     private func pauseListeningForMediaIfNeeded() {
         wasListeningBeforeMediaPlayback = listeningManager.isListening
         if listeningManager.isListening {
@@ -75,7 +64,8 @@ struct EventTimelineView: View {
         guard !audioPlayer.isPlaying && !narrator.isSpeaking else { return }
         guard !listeningManager.isListening else { return }
         listeningManager.startListening()
-=======
+    }
+    
     private func sentenceFragment(_ text: String) -> String {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let firstCharacter = trimmed.first else { return trimmed }
@@ -86,7 +76,6 @@ struct EventTimelineView: View {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let firstCharacter = trimmed.first else { return trimmed }
         return firstCharacter.uppercased() + trimmed.dropFirst()
->>>>>>> origin/joseph
     }
     
     var body: some View {

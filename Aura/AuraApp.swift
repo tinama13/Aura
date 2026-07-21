@@ -11,6 +11,10 @@ import UserNotifications
 
 extension Notification.Name {
     static let auraOpenDetectedEvent = Notification.Name("auraOpenDetectedEvent")
+    static let auraRestartTutorial = Notification.Name("auraRestartTutorial")
+    static let auraTutorialOpenTab = Notification.Name("auraTutorialOpenTab")
+    static let auraTutorialPresetHeld = Notification.Name("auraTutorialPresetHeld")
+    static let auraTutorialAddSoundsDone = Notification.Name("auraTutorialAddSoundsDone")
 }
 
 class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
@@ -46,10 +50,6 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     }
 }
 
-// Owns the onboarding gate and switches between OnBoardingView and the main
-// app (ContentView) based on it. This didn't exist before — nothing was ever
-// checking hasCompletedOnboarding, so OnBoardingView was unreachable no
-// matter what that flag was set to.
 struct RootView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     

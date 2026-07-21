@@ -107,7 +107,10 @@ struct PresetsView: View {
                                 title: category,
                                 isSelected: presetManager.isSoundSelected(presetID: presetManager.activePresetID, soundName: category),
                                 isLocked: isDefaultSound
-                            )
+                            ) {
+                                guard tutorialStepName.isEmpty, !isDefaultSound else { return }
+                                presetManager.toggleSelection(presetID: presetManager.activePresetID, soundName: category)
+                            }
                         }
                     }
                     .padding(.horizontal, 2)
@@ -126,7 +129,7 @@ struct PresetsView: View {
             
             Button {
                 guard tutorialStepName.isEmpty else { return }
-                showingNewPresetSheet = true // 👉 FIXED: This triggers the sheet to open
+                showingNewPresetSheet = true
             } label: {
                 HStack(spacing: 10) {
                     Image(systemName: "star.circle.fill")
@@ -136,7 +139,7 @@ struct PresetsView: View {
                 }
                 .foregroundStyle(.white)
                 .frame(width: 196, height: 45)
-                .background(Color(red: 0.42, green: 0.29, blue: 0.72))
+                .background(Color(red: 0.204, green: 0.678, blue: 0.914))
                 .clipShape(Capsule())
             }
             .buttonStyle(.plain)
@@ -144,7 +147,7 @@ struct PresetsView: View {
                 [.newPresetButton: anchor]
             }
             .padding(.bottom, 40)
-            .sheet(isPresented: $showingNewPresetSheet) { // 👉 FIXED: This tells it which view to show
+            .sheet(isPresented: $showingNewPresetSheet) {
                 NewPresetView()
             }
         }
@@ -152,8 +155,6 @@ struct PresetsView: View {
         .background(Color.white)
     }
 }
-
-// MARK: - Subviews
 
 private struct PresetModeButton: View {
     let preset: Preset
@@ -194,30 +195,35 @@ private struct CategoryRow: View {
     let title: String
     let isSelected: Bool
     let isLocked: Bool
+    let action: () -> Void
     
     var body: some View {
-        HStack {
-            Text(title)
-                .font(.system(size: 17, weight: .bold))
-                .foregroundStyle(isLocked ? .gray : .black)
-            
-            Spacer()
-            
-            if isSelected {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 16, weight: .bold))
+        Button(action: action) {
+            HStack {
+                Text(title)
+                    .font(.system(size: 17, weight: .bold))
                     .foregroundStyle(isLocked ? .gray : .black)
+                
+                Spacer()
+                
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(isLocked ? .gray : .black)
+                }
+            }
+            .padding(.horizontal, 10)
+            .frame(height: 36)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .stroke(Color.black.opacity(0.38), lineWidth: 1)
             }
         }
-        .padding(.horizontal, 10)
-        .frame(height: 36)
-        .background(Color.white)
+        .buttonStyle(.plain)
         .opacity(isLocked ? 0.65 : 1.0)
-        .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 9, style: .continuous)
-                .stroke(Color.black.opacity(0.38), lineWidth: 1)
-        }
+        .disabled(isLocked)
     }
 }
 

@@ -29,6 +29,23 @@
         "id" : "43F8CB74-D291-439C-B1C6-00A55C607030",
         "subtitle" : "AuraSoundDetection 4",
         "title" : "Used By"
+      },
+      {
+        "createdDate" : "2026-07-21T04:44:03Z",
+        "event" : "dataSourceTrainingStarted",
+        "id" : "D151823E-9E43-40D3-9F02-E641F3433BC8",
+        "subtitle" : "AuraSoundDetection 5",
+        "title" : "Used By"
+      }
+    ],
+    "dataSourceCreated",
+    [
+      {
+        "createdDate" : "2026-07-08T15:56:31Z",
+        "event" : "dataSourceCreated",
+        "id" : "5BF69B51-A120-4C1C-A182-2B96130D3841",
+        "subtitle" : "Training_Data",
+        "title" : "Data Source Created"
       }
     ],
     "dataSourceMetrics",
@@ -60,16 +77,13 @@
         "id" : "B7B4AC8A-22DA-46DE-94CF-9CC1ECA20AD1",
         "subtitle" : "3 Classes, 35 Items",
         "title" : "Data Summary"
-      }
-    ],
-    "dataSourceCreated",
-    [
+      },
       {
-        "createdDate" : "2026-07-08T15:56:31Z",
-        "event" : "dataSourceCreated",
-        "id" : "5BF69B51-A120-4C1C-A182-2B96130D3841",
-        "subtitle" : "Training_Data",
-        "title" : "Data Source Created"
+        "createdDate" : "2026-07-21T04:44:03Z",
+        "event" : "dataSourceMetrics",
+        "id" : "49BAB8C8-6491-4323-B1E6-98734A944F7C",
+        "subtitle" : "3 Classes, 104 Items",
+        "title" : "Data Summary"
       }
     ]
   ],
@@ -81,11 +95,43 @@
     "dataAnalysis" : {
       "classifierAnalysis" : {
         "details" : [
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/612858__weak_hero__dog.wav",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/49053354-old-car-horn-2-306421.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/spinopel-small-dog-barking-381828.mp3",
+          [
+            "dog_barking"
+          ],
           "file:///Users/tinama/Documents/Aura/Training_Data/silence/861226__beaconstudio__noise1-hiss.wav",
           [
             "silence"
           ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/spinopel-market-background-noise-281247.mp3",
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-klakson-telolet-indonesian-big-bus-custom-horn-31303.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-3-191449.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-refrigerator-37431.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-white-noise-sweep-up-85276.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-growling-and-barking-dog-33310.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861230__beaconstudio__noise-4-crescendo-hum.wav",
           [
             "silence"
           ],
@@ -93,23 +139,311 @@
           [
             "dog_barking"
           ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861228__beaconstudio__noise3-ambience.wav",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/dragon-studio-clown-car-horn-487659.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/180977__superstudiobr__barking-dog.wav",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn_eu3-36554.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-mercury-marquis-36979.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/susan-lu4esm-bocina-auto-436979.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-horn-93439.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-white-noise-6971.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-double-car-honk-352443.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-barking-406629.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-45511.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-honk-mus-152-94478.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-roomtone-bedroom-small-quiet-6754.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barks-75750.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861231__beaconstudio__noise-5-high-hiss.wav",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horns-73144.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-two-dogs-barking-71633.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/spinopel-barking-of-a-small-dog-393124.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/dragon-studio-car-honk-386166.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/alex_jauk-dog-running-amp-barking-404938.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-1-189855.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/soul_serenity_sounds-ambient-noise-236388.mp3",
+          [
+            "silence"
+          ],
           "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-radio-static-6382.mp3",
           [
             "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861232__beaconstudio__noise-6-helicopter-rumble.wav",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-town-ambience-31063.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/tomas_herudek-heartbeat-slow-quiet-and-simple-529662.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-barking-sound-effect-427408.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-free-dog-bark-419014.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-ambientsound-27920.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-90973.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-back-garden-ambience-76754.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-distant-dog-barking-472373.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/blendertimer-white-noise-8117.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barking-101729.mp3",
+          [
+            "dog_barking"
           ],
           "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-underwater-white-noise-46423.mp3",
           [
             "silence"
           ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/pwlpl-tornado-warning-siren-sound-effect-359252.mp3",
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-computer-fan-25659.mp3",
           [
-            "tornado"
+            "silence"
           ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/freesound_community-multiple-tornado-alarms-17375.mp3",
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/alex_jauk-large-dog-barking-529367.mp3",
           [
-            "tornado"
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-background-noise-45700.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-044197_2013-dodge-charger-car-horn-wav-72822.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-6408.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-2000-nissan-maxima-car-horn-72828.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/mehmetfaal1991-turkish-dog-barking-at-night-16300.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/zehendrew-calm-rain-528409.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/koiroylers-car-horn-355971.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-4-189858.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-small-quiet-street-ambience-57624.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-sharp-horn-92676.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-beep-beep-two-beeps-honk-honk-6188.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/wings_of_freedom-quiet-sound-426142.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/flutie8211-car-horn-honking-413906.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dbsound-dog-barking-in-distant-502555.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-83351.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-075714_la-cucaracha-car-hornwav-80095.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/749352__wateenfotos__barking-ines-3.wav",
+          [
+            "dog_barking"
           ],
           "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-barking-dog-cute-sound-463192.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-car-horn-02-153260.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-comedic-silence-90574.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-vintage-car-horn-153264.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-car-horn-153261.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/scottishperson-sound-effect-dog-barking-and-growling-03-367318.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-dead-air-61128.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-camry-horn-103641.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-ambience-near-forest-area-56946.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-automobile-horn-02-352065.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/dragon-studio-soothing-white-noise-323619.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-quiet-respiration-woman-7018.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-barking-dog-6980.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-40205.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/ambient_house-car-horn-sounding-off-in-the-distance-342177.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/u_vshmonplts-crowd-noise-390947.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/ambient_house-dog-barking-332832.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-bark-382732.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-bark-sfx-450453.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-midnight-clock-17255.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-small-barking-angrily-medium-close-cuba-72513.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/kai_audio-bedroom-room-tone-446021.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dogs-barking-01-494305.mp3",
           [
             "dog_barking"
           ],
@@ -117,132 +451,88 @@
           [
             "silence"
           ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-white-noise-6971.mp3",
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/digitalstore07-horn-430368.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/floraphonic-car-horn-2-189856.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-distant-horn-beeps-09-62142.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-071078_husky-dog-barking-and-quottalkingquot-38761.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesounds123-car-horn-338827.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/universfield-vintage-car-horn-153262.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/spinopel-market-background-noise-281247.mp3",
           [
             "silence"
           ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/180977__superstudiobr__barking-dog.wav",
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barking-72300.mp3",
           [
             "dog_barking"
           ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-barking-sound-effect-427408.mp3",
+          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-large-empty-church-hall-silence-ambiance-air-tone-buzz-noise-29996.mp3",
+          [
+            "silence"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/freesound_community-car-horn-37932.mp3",
+          [
+            "car_horns"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/solarmusic-big-dog-bark-distant-113701.mp3",
           [
             "dog_barking"
           ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/pwlpl-tornado-warning-siren-sound-effect-359251.mp3",
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/photos-dog-barking-in-the-distance-395349.mp3",
           [
-            "tornado"
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/spinopel-guard-dog-barking-456325.mp3",
+          [
+            "dog_barking"
+          ],
+          "file:///Users/tinama/Documents/Aura/Training_Data/car_horns/49053354-old-car-horn-305817.mp3",
+          [
+            "car_horns"
           ],
           "file:///Users/tinama/Documents/Aura/Training_Data/silence/extrasounds-white-noise-358382.mp3",
           [
             "silence"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/freesound_community-siren-warning-all-clear-signal-22562.mp3",
-          [
-            "tornado"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-white-noise-sweep-up-85276.mp3",
-          [
-            "silence"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-barking-406629.mp3",
-          [
-            "dog_barking"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/121532__thaighaudio__2010-01-05-tornado-siren-test.flac",
-          [
-            "tornado"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861230__beaconstudio__noise-4-crescendo-hum.wav",
-          [
-            "silence"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/freesound_community-tornado-siren-in-streamwood-il-35510.mp3",
-          [
-            "tornado"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861232__beaconstudio__noise-6-helicopter-rumble.wav",
-          [
-            "silence"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/freesound_community-background-noise-45700.mp3",
-          [
-            "silence"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/72831__audible-edge__tornado-siren-in-streamwood-il.wav",
-          [
-            "tornado"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/612858__weak_hero__dog.wav",
-          [
-            "dog_barking"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/dragon-studio-soothing-white-noise-323619.mp3",
-          [
-            "silence"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/tornado/515695__filmscore__tornado-sirens-tulsa.wav",
-          [
-            "tornado"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861231__beaconstudio__noise-5-high-hiss.wav",
-          [
-            "silence"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/u_vshmonplts-crowd-noise-390947.mp3",
-          [
-            "silence"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/blendertimer-white-noise-8117.mp3",
-          [
-            "silence"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/silence/861228__beaconstudio__noise3-ambience.wav",
-          [
-            "silence"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-free-dog-bark-419014.mp3",
-          [
-            "dog_barking"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/749352__wateenfotos__barking-ines-3.wav",
-          [
-            "dog_barking"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-distant-dog-barking-472373.mp3",
-          [
-            "dog_barking"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/freesound_community-dog-barking-101729.mp3",
-          [
-            "dog_barking"
-          ],
-          "file:///Users/tinama/Documents/Aura/Training_Data/dog_barking/dragon-studio-dog-bark-382732.mp3",
-          [
-            "dog_barking"
           ]
         ],
         "labelStats" : {
-          "dog_barking" : 11,
-          "silence" : 16,
-          "tornado" : 8
+          "car_horns" : 39,
+          "dog_barking" : 31,
+          "silence" : 34
         }
       },
       "issues" : [
         {
-          "description" : "3 classes found, including silence, dog_barking, tornado",
+          "description" : "3 classes found, including car_horns, silence, dog_barking",
           "severity" : "debug"
         },
         {
-          "description" : "Less than 50 total sounds found - add more to improve model validation",
-          "severity" : "warning"
+          "description" : "104 sounds found, automatically creating validation set",
+          "severity" : "good"
         },
         {
-          "description" : "Smallest class is \"tornado\" with 8 sounds",
+          "description" : "Smallest class is \"dog_barking\" with 31 sounds",
           "severity" : "debug"
         },
         {
-          "description" : "Largest class is \"silence\" with 16 sounds",
+          "description" : "Largest class is \"car_horns\" with 39 sounds",
           "severity" : "debug"
         }
       ],
@@ -252,23 +542,21 @@
         }
       },
       "summary" : {
-        "canUseValidation" : 0,
+        "canUseValidation" : 1,
         "classCount" : 3,
-        "sampleCount" : 35
-      },
-      "warning" : "Less than 50 total sounds found - add more to improve model validation"
+        "sampleCount" : 104
+      }
     },
     "dataSourceID" : "00A0A504-FA97-4030-9298-B0DD6A35C653",
     "dataURL" : "file:///Users/tinama/Documents/Aura/Training_Data/",
-    "itemsCount" : 35,
-    "warning" : "Less than 50 total sounds found - add more to improve model validation"
+    "itemsCount" : 104
   },
   "dataURL" : "file:///Users/tinama/Documents/Aura/Training_Data/",
   "experimentIDs" : [
-    "D6111223-37FA-4037-969B-1F126E44E932"
+    "68A5CAE0-0E36-4E20-BF88-9F8F7D164CC8"
   ],
   "id" : "00A0A504-FA97-4030-9298-B0DD6A35C653",
-  "modifiedDate" : "2026-07-08T16:11:12Z",
+  "modifiedDate" : "2026-07-21T04:45:14Z",
   "pathType" : 0,
   "preferredFilename" : "Training_Data",
   "title" : "Training_Data",

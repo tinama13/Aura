@@ -33,10 +33,9 @@ struct ContentView: View {
     @State private var current_tab: Tab = .home
     @State private var tutorialStep: AuraTutorialStep?
     @State private var eventToOpen: DetectedEvent?
-
-    @State private var warningVibrationTimer: Timer?
+    
     @AppStorage("auraTutorialStepName") private var tutorialStepName = ""
-
+    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
@@ -54,39 +53,6 @@ struct ContentView: View {
                 
                 NavBar(current_tab: $current_tab)
                     .allowsHitTesting(tutorialStep == nil || tutorialStep?.allowsTabBarInteraction == true)
-                
-<<<<<<< HEAD
-                if let tutorialStep {
-                    AuraTutorialOverlay(
-                        step: tutorialStep,
-                        onNext: advanceTutorial,
-                        onSkip: finishTutorial
-                    )
-                    .zIndex(3)
-=======
-                if showAlert {
-                    ZStack {
-                        Color.black.opacity(0.28)
-                            .ignoresSafeArea()
-                        
-                        AlertPopupView(
-                            soundName: currentAlertSound,
-                            onDismiss: {
-                                stopWarningVibration()
-                                withAnimation { showAlert = false }
-                            },
-                            onViewDetails: {
-                                stopWarningVibration()
-                                eventToOpen = pendingEvent
-                                withAnimation { showAlert = false }
-                            },
-                            onReadWarning: {}
-                        )
-                        .transition(.scale.combined(with: .opacity))
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .zIndex(2)
-                    }
             }
             .overlayPreferenceValue(AuraTutorialHighlightPreferenceKey.self) { anchors in
                 GeometryReader { geometry in
@@ -101,7 +67,6 @@ struct ContentView: View {
                         .allowsHitTesting(!tutorialStep.requiresUserAction)
                         .zIndex(3)
                     }
->>>>>>> origin/joseph
                 }
             }
             .edgesIgnoringSafeArea(.bottom)
@@ -109,29 +74,8 @@ struct ContentView: View {
                 EventTimelineView(event: event)
             }
         }
-<<<<<<< HEAD
-=======
-        .onChange(of: listeningManager.latestAcceptedEvent) { oldValue, newValue in
-            guard let event = newValue else { return }
-            currentAlertSound = listeningManager.latestAlertSound
-            pendingEvent = event
-            if isAlarmSound(event.name) {
-                triggerAlarmVibration()
-            }
-            startWarningVibration()
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                showAlert = true
-            }
-        }
-        .onChange(of: showAlert) { oldValue, newValue in
-            if !newValue {
-                stopWarningVibration()
-            }
-        }
->>>>>>> origin/joseph
-        .onChange(of: scenePhase) { oldValue, newValue in
+        .onChange(of: scenePhase) { newValue in
             if newValue == .active {
-                print("Aura scene active. listening=\(listeningManager.isListening)")
                 listeningManager.applyPendingControlRequests(presetManager: presetManager)
                 listeningManager.resumeListeningIfNeeded(forceRestart: true)
                 listeningManager.syncListeningControlWithCurrentState()
@@ -148,7 +92,7 @@ struct ContentView: View {
                 listeningManager.logListeningStatus("scene background")
             }
         }
-        .onChange(of: current_tab) { oldValue, newValue in
+        .onChange(of: current_tab) { newValue in
             if newValue == .home {
                 listeningManager.resumeListeningIfNeeded()
             }
@@ -216,37 +160,6 @@ struct ContentView: View {
         eventToOpen = event
     }
     
-<<<<<<< HEAD
-=======
-    private func isAlarmSound(_ soundName: String) -> Bool {
-        let normalizedName = soundName.lowercased()
-        return normalizedName.contains("alarm")
-            || normalizedName.contains("siren")
-            || normalizedName.contains("smoke")
-            || normalizedName.contains("emergency")
-    }
-    
-    private func triggerAlarmVibration() {
-        let feedbackGenerator = UINotificationFeedbackGenerator()
-        feedbackGenerator.prepare()
-        feedbackGenerator.notificationOccurred(.warning)
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-    }
-    
-    private func startWarningVibration() {
-        stopWarningVibration()
-        triggerAlarmVibration()
-        warningVibrationTimer = Timer.scheduledTimer(withTimeInterval: 0.9, repeats: true) { _ in
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-        }
-    }
-    
-    private func stopWarningVibration() {
-        warningVibrationTimer?.invalidate()
-        warningVibrationTimer = nil
-    }
-    
->>>>>>> origin/joseph
     private func startTutorial() {
         current_tab = .home
         withAnimation(.easeInOut(duration: 0.2)) {
@@ -314,13 +227,6 @@ struct AuraTutorialHighlightPreferenceKey: PreferenceKey {
     ) {
         value.merge(nextValue(), uniquingKeysWith: { _, newValue in newValue })
     }
-}
-
-extension Notification.Name {
-    static let auraRestartTutorial = Notification.Name("auraRestartTutorial")
-    static let auraTutorialOpenTab = Notification.Name("auraTutorialOpenTab")
-    static let auraTutorialPresetHeld = Notification.Name("auraTutorialPresetHeld")
-    static let auraTutorialAddSoundsDone = Notification.Name("auraTutorialAddSoundsDone")
 }
 
 private enum AuraTutorialStep: Int, CaseIterable {
@@ -436,7 +342,7 @@ private enum AuraTutorialStep: Int, CaseIterable {
         case .startListening:
             return CGRect(x: (size.width - 232) / 2, y: 188, width: 232, height: 278)
         case .recentList:
-            let top = min(560, size.height - 220)
+            let top = min(500, size.height - 350)
             let bottom = max(top + 110, size.height - 118)
             return CGRect(x: 20, y: top, width: size.width - 40, height: bottom - top)
         case .switchToPresets:
@@ -631,12 +537,4 @@ private struct AuraTutorialOverlay: View {
             return ""
         }
     }
-}
-
-#Preview {
-    ContentView()
-        .environmentObject(SoundManager())
-        .environmentObject(PresetManager())
-        .environmentObject(HistoryManager())
-        .environmentObject(ListeningManager.shared)
 }

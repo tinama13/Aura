@@ -8,7 +8,6 @@
 import SwiftUI
 import Combine
 import SoundAnalysis
-import CoreML
 import AVFoundation
 
 struct SoundDetection: Identifiable, Equatable {
@@ -69,8 +68,11 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     private var lastAudioTapLogAt: Date?
     private var lastClassificationLogAt: Date?
     
+    private var currentRequest: SNRequest?
+    private var systemRequest: SNClassifySoundRequest?
+    
     private let detectionRecordingDuration: TimeInterval = 4
-    private let minimumConfidence = 0.85
+    private let minimumConfidence = 0.75
     private let activeSoundConfidence = 0.35
     private let requiredConsecutiveMatches = 1
     private let detectionCooldown: TimeInterval = 6
@@ -101,34 +103,16 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         return Date().timeIntervalSince(listeningStartedAt)
     }
     
-    var debugStatus: String {
-        let lastBufferDescription: String
-        if let secondsSinceLastAudioBuffer {
-            lastBufferDescription = String(format: "%.1fs ago", secondsSinceLastAudioBuffer)
-        } else {
-            lastBufferDescription = "never"
-        }
-        
-        let noBufferDescription: String
-        if let secondsSinceListeningStartedWithoutAudio {
-            noBufferDescription = String(format: "%.1fs", secondsSinceListeningStartedWithoutAudio)
-        } else {
-            noBufferDescription = "n/a"
-        }
-        
-        return "engineRunning=\(audioEngine.isRunning), lastBuffer=\(lastBufferDescription), startedWithoutBuffer=\(noBufferDescription)"
-    }
-    
     @discardableResult
     func startListening() -> Bool {
         if audioEngine.isRunning {
             return true
         }
         
-<<<<<<< HEAD
-=======
         audioEngine.inputNode.removeTap(onBus: 0)
         streamAnalyzer = nil
+        currentRequest = nil
+        
         resetDetectionState()
         clearAudioState()
         listeningStartedAt = nil
@@ -136,33 +120,33 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         lastAudioTapLogAt = nil
         lastClassificationLogAt = nil
         
-        guard let model = try? AuraSoundDetection(configuration: MLModelConfiguration()) else {
-            print("Failed to load the Create ML model.")
-            return false
-        }
-        
-        let mlModel = model.model
-        
->>>>>>> origin/joseph
         do {
-            let request = try SNClassifySoundRequest(classifierIdentifier: .version1)
-            request.overlapFactor = 0.5
+            let request = try systemClassificationRequest()
+            print("Starting SoundAnalysis with Apple's built-in System Classifier")
             
             try configureAudioSessionForContinuousListening()
             
             let inputNode = audioEngine.inputNode
             let inputFormat = inputNode.outputFormat(forBus: 0)
+            
+            guard inputFormat.sampleRate > 0, inputFormat.channelCount > 0 else {
+                print("Aura audio input format is invalid (sample rate or channels are 0). Aborting start.")
+                return false
+            }
+            
             recordingFormat = inputFormat
             installSilentOutputNode(sampleRate: inputFormat.sampleRate)
             
             streamAnalyzer = SNAudioStreamAnalyzer(format: inputFormat)
             try streamAnalyzer?.add(request, withObserver: self)
+            currentRequest = request
             
             inputNode.installTap(onBus: 0, bufferSize: 8192, format: inputFormat) { [weak self] buffer, time in
                 let now = Date()
                 self?.lastAudioBufferReceivedAt = now
                 self?.logAudioTapIfNeeded(at: now)
                 self?.storeRecentAudio(buffer, at: time.sampleTime)
+                
                 self?.streamAnalyzer?.analyze(buffer, atAudioFramePosition: time.sampleTime)
             }
             
@@ -171,6 +155,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             audioEngine.prepare()
             try audioEngine.start()
             listeningStartedAt = Date()
+            
             print("AI is now actively listening!")
             return true
             
@@ -178,6 +163,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             print("Error starting AI: \(error.localizedDescription)")
             audioEngine.inputNode.removeTap(onBus: 0)
             streamAnalyzer = nil
+            currentRequest = nil
             resetDetectionState()
             clearAudioState()
             return false
@@ -191,7 +177,13 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             audioEngine.detach(silenceSourceNode)
             self.silenceSourceNode = nil
         }
+        if let analyzer = streamAnalyzer, let request = currentRequest {
+            try? analyzer.remove(request)
+        }
+
         streamAnalyzer = nil
+        currentRequest = nil
+        recordingFormat = nil
         resetDetectionState()
         clearAudioState()
         listeningStartedAt = nil
@@ -201,15 +193,25 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
         print("AI stopped listening.")
     }
     
+    private func systemClassificationRequest() throws -> SNClassifySoundRequest {
+        if let systemRequest { return systemRequest }
+        let request = try SNClassifySoundRequest(classifierIdentifier: .version1)
+        request.overlapFactor = 0.5
+        systemRequest = request
+        return request
+    }
+    
     private func configureAudioSessionForContinuousListening() throws {
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setPreferredSampleRate(44_100)
         try audioSession.setPreferredIOBufferDuration(0.02)
+        
         try audioSession.setCategory(
             .playAndRecord,
-            mode: .measurement,
-            options: [.allowBluetoothHFP, .defaultToSpeaker, .mixWithOthers]
+            mode: .default,
+            options: [.allowBluetoothHFP, .defaultToSpeaker, .mixWithOthers, .allowAirPlay]
         )
+        
         try audioSession.setActive(true)
         
         if let builtInMic = audioSession.availableInputs?.first(where: { $0.portType == .builtInMic }) {
@@ -240,19 +242,13 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     }
     
     private func logAudioTapIfNeeded(at date: Date) {
-        guard lastAudioTapLogAt == nil || date.timeIntervalSince(lastAudioTapLogAt!) >= 5 else {
-            return
-        }
+        guard lastAudioTapLogAt == nil || date.timeIntervalSince(lastAudioTapLogAt!) >= 5 else { return }
         lastAudioTapLogAt = date
-        print("Aura audio tap active at \(date)")
     }
     
     private func logClassificationIfNeeded(label: String, confidence: Double, at date: Date) {
-        guard lastClassificationLogAt == nil || date.timeIntervalSince(lastClassificationLogAt!) >= 5 else {
-            return
-        }
+        guard lastClassificationLogAt == nil || date.timeIntervalSince(lastClassificationLogAt!) >= 5 else { return }
         lastClassificationLogAt = date
-        print("Aura classification heartbeat: label=\(label), confidence=\(String(format: "%.2f", confidence)), time=\(date)")
     }
     
     func request(_ request: SNRequest, didProduce result: SNResult) {
@@ -287,7 +283,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
     }
     
     func request(_ request: SNRequest, didFailWithError error: Error) {
-        print("AI Analysis failed: \(error.localizedDescription)")
+        print("SoundAnalysis failed: \(error.localizedDescription)")
     }
     
     private func resetDetectionState() {

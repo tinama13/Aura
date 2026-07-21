@@ -6,8 +6,6 @@ private enum AuraControlIntentStorage {
     static let isListeningKey = "aura.control.isListening"
     static let requestedListeningKey = "aura.control.requestedListening"
     static let listeningRequestIDKey = "aura.control.listeningRequestID"
-    static let requestedFavoriteSlotKey = "aura.control.requestedFavoriteSlot"
-    static let presetRequestIDKey = "aura.control.presetRequestID"
     
     static var defaults: UserDefaults {
         UserDefaults(suiteName: "group.app.tinama.aura") ?? .standard
@@ -17,13 +15,6 @@ private enum AuraControlIntentStorage {
         defaults.set(isListening, forKey: isListeningKey)
         defaults.set(isListening, forKey: requestedListeningKey)
         defaults.set(UUID().uuidString, forKey: listeningRequestIDKey)
-        defaults.synchronize()
-        postCommandNotification()
-    }
-    
-    static func requestFavoritePreset(slot: Int) {
-        defaults.set(slot, forKey: requestedFavoriteSlotKey)
-        defaults.set(UUID().uuidString, forKey: presetRequestIDKey)
         defaults.synchronize()
         postCommandNotification()
     }
@@ -50,36 +41,9 @@ struct ToggleAuraListeningIntent: SetValueIntent, LiveActivityIntent {
     
     func perform() async throws -> some IntentResult {
         await MainActor.run {
-            if value {
-                ListeningManager.shared.startListening()
-            } else {
-                ListeningManager.shared.stopListening()
-            }
-        }
-        await MainActor.run {
             AuraControlIntentStorage.requestListening(value)
         }
-        return .result()
-    }
-}
-
-struct SwitchAuraPresetIntent: AppIntent, LiveActivityIntent {
-    static let title: LocalizedStringResource = "Switch Aura Preset"
-    static var openAppWhenRun: Bool = false
-    
-    @Parameter(title: "Favorite Preset Slot")
-    var slot: Int
-    
-    init() {}
-    
-    init(slot: Int) {
-        self.slot = slot
-    }
-    
-    func perform() async throws -> some IntentResult {
-        await MainActor.run {
-            AuraControlIntentStorage.requestFavoritePreset(slot: slot)
-        }
+        
         return .result()
     }
 }

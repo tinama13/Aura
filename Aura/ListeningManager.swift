@@ -37,16 +37,13 @@ final class ListeningManager: ObservableObject {
     private weak var controlPresetManager: PresetManager?
     private weak var historyManager: HistoryManager?
     private let listeningNotificationIdentifier = "AuraBackgroundListening"
-<<<<<<< HEAD
     
-=======
     private var hasShownListeningNotification = false
     private var recoveryTask: Task<Void, Never>?
     private var listeningHealthTask: Task<Void, Never>?
     private var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     private var isRequestingMicrophonePermission = false
 
->>>>>>> origin/joseph
     private init() {
         recognizer.$latestDetection
             .receive(on: DispatchQueue.main)
@@ -140,21 +137,15 @@ final class ListeningManager: ObservableObject {
         
         if recognizer.startListening() {
             isListening = true
-<<<<<<< HEAD
             ControlStorage.defaults.set(true, forKey: ControlStorage.isListeningKey)
             reloadListeningControl()
-            } else {
-=======
             beginBackgroundListeningTask()
             startListeningHealthMonitor()
             requestNotificationPermissionAndShowListeningNotification()
-            logListeningStatus("startListening succeeded")
         } else {
->>>>>>> origin/joseph
             isListening = false
             ControlStorage.defaults.set(false, forKey: ControlStorage.isListeningKey)
             reloadListeningControl()
-            logListeningStatus("startListening failed")
         }
     }
     
@@ -179,7 +170,6 @@ final class ListeningManager: ObservableObject {
         hasShownListeningNotification = false
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [listeningNotificationIdentifier])
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [listeningNotificationIdentifier])
-        logListeningStatus("stopListening")
     }
     
     func refreshListeningNotificationIfNeeded() {
@@ -190,35 +180,31 @@ final class ListeningManager: ObservableObject {
     func prepareForBackgroundListening() {
         guard isListening else { return }
         beginBackgroundListeningTask()
-        resumeListeningIfNeeded(forceRestart: true)
+
         requestNotificationPermissionAndShowListeningNotification()
-        logListeningStatus("prepareForBackgroundListening")
     }
     
     func resumeListeningIfNeeded(forceRestart: Bool = false) {
-        guard isListening else { return }
-        
-        if forceRestart {
-            recognizer.stopListening()
-        } else if recognizer.isActivelyListening {
-            logListeningStatus("resumeListeningIfNeeded already active")
-            return
+            guard isListening else { return }
+            
+            if forceRestart {
+                recognizer.stopListening()
+            } else if recognizer.isActivelyListening {
+                return
+            }
+            
+            if recognizer.startListening() {
+                ControlStorage.defaults.set(true, forKey: ControlStorage.isListeningKey)
+                reloadListeningControl()
+                beginBackgroundListeningTask()
+                startListeningHealthMonitor()
+                requestNotificationPermissionAndShowListeningNotification()
+            } else {
+                ControlStorage.defaults.set(true, forKey: ControlStorage.isListeningKey)
+                reloadListeningControl()
+                scheduleListeningRecovery(forceRestart: true, delay: 1.5)
+            }
         }
-        
-        if recognizer.startListening() {
-            ControlStorage.defaults.set(true, forKey: ControlStorage.isListeningKey)
-            reloadListeningControl()
-            beginBackgroundListeningTask()
-            startListeningHealthMonitor()
-            requestNotificationPermissionAndShowListeningNotification()
-            logListeningStatus("resumeListeningIfNeeded succeeded forceRestart=\(forceRestart)")
-        } else {
-            ControlStorage.defaults.set(true, forKey: ControlStorage.isListeningKey)
-            reloadListeningControl()
-            scheduleListeningRecovery(forceRestart: true, delay: 1.5)
-            logListeningStatus("resumeListeningIfNeeded failed forceRestart=\(forceRestart)")
-        }
-    }
     
     func toggleListening() {
         if isListening {
@@ -234,27 +220,6 @@ final class ListeningManager: ObservableObject {
     }
     
     func logListeningStatus(_ reason: String) {
-        let appState: String
-        switch UIApplication.shared.applicationState {
-        case .active:
-            appState = "active"
-        case .inactive:
-            appState = "inactive"
-        case .background:
-            appState = "background"
-        @unknown default:
-            appState = "unknown"
-        }
-        
-        let backgroundTimeRemaining = UIApplication.shared.backgroundTimeRemaining
-        let backgroundTimeDescription = backgroundTimeRemaining.isFinite
-            ? String(format: "%.1fs", backgroundTimeRemaining)
-            : "unlimited"
-        print("Aura listening status [\(reason)]: isListening=\(isListening), appState=\(appState), \(recognizer.debugStatus), backgroundTimeRemaining=\(backgroundTimeDescription)")
-        
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            print("Aura notification status [\(reason)]: authorization=\(settings.authorizationStatus), alert=\(settings.alertSetting), sound=\(settings.soundSetting)")
-        }
     }
     
     func configureControlRequests(presetManager: PresetManager, historyManager: HistoryManager? = nil) {
@@ -355,7 +320,6 @@ final class ListeningManager: ObservableObject {
     
     func processDetection(_ detection: SoundDetection, presetManager: PresetManager, historyManager: HistoryManager) {
         let displayName = formattedSoundName(detection.name)
-<<<<<<< HEAD
         
         if historyManager.containsEvent(id: detection.id) {
             _ = historyManager.logEvent(
@@ -374,11 +338,6 @@ final class ListeningManager: ObservableObject {
                 try? FileManager.default.removeItem(at: audioFileURL)
             }
             return
-=======
-        let isIncludedInActivePreset = isEnabled(displayName, in: presetManager)
-        if !isIncludedInActivePreset {
-            print("Aura detected \(displayName), but it did not match the active preset exactly. Logging it anyway.")
->>>>>>> origin/joseph
         }
         
         let now = Date()
@@ -407,15 +366,10 @@ final class ListeningManager: ObservableObject {
         )
         latestAlertSound = displayName
         latestAcceptedEvent = newEvent
-<<<<<<< HEAD
+        
         if UIApplication.shared.applicationState != .active {
-                    requestNotificationPermissionAndSendDetectionNotification(event: newEvent)
-                }
-=======
-        print("Aura accepted detection: \(displayName), appState=\(UIApplication.shared.applicationState)")
-        logListeningStatus("accepted detection")
-        requestNotificationPermissionAndSendDetectionNotification(event: newEvent)
->>>>>>> origin/joseph
+            requestNotificationPermissionAndSendDetectionNotification(event: newEvent)
+        }
     }
     
     static func registerNotificationActions() {
@@ -434,6 +388,7 @@ final class ListeningManager: ObservableObject {
     }
     
     private func showBackgroundListeningNotification() {
+        guard UIApplication.shared.applicationState != .active else { return }
         guard !hasShownListeningNotification else { return }
         hasShownListeningNotification = true
         
@@ -448,24 +403,12 @@ final class ListeningManager: ObservableObject {
             content: content,
             trigger: nil
         )
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error {
-                print("Failed to show listening notification: \(error.localizedDescription)")
-            } else {
-                print("Aura listening notification queued.")
-            }
-        }
+        UNUserNotificationCenter.current().add(request)
     }
     
     private func requestNotificationPermissionAndShowListeningNotification() {
-        UNUserNotificationCenter.current().requestAuthorization(options: notificationAuthorizationOptions) { granted, error in
-            if let error {
-                print("Failed to request listening notification permission: \(error.localizedDescription)")
-            }
-            guard granted else {
-                print("Aura listening notification permission not granted.")
-                return
-            }
+        UNUserNotificationCenter.current().requestAuthorization(options: notificationAuthorizationOptions) { granted, _ in
+            guard granted else { return }
             Task { @MainActor in
                 ListeningManager.shared.showBackgroundListeningNotification()
             }
@@ -482,13 +425,7 @@ final class ListeningManager: ObservableObject {
         ]
         
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error {
-                print("Failed to send detection notification: \(error.localizedDescription)")
-            } else {
-                print("Aura detection notification queued for \(event.name).")
-            }
-        }
+        UNUserNotificationCenter.current().add(request)
     }
     
     private func sendListeningRecoveryNotification(reason: String) {
@@ -506,14 +443,8 @@ final class ListeningManager: ObservableObject {
     }
     
     private func requestNotificationPermissionAndSendDetectionNotification(event: DetectedEvent) {
-        UNUserNotificationCenter.current().requestAuthorization(options: notificationAuthorizationOptions) { granted, error in
-            if let error {
-                print("Failed to request detection notification permission: \(error.localizedDescription)")
-            }
-            guard granted else {
-                print("Aura detection notification permission not granted.")
-                return
-            }
+        UNUserNotificationCenter.current().requestAuthorization(options: notificationAuthorizationOptions) { granted, _ in
+            guard granted else { return }
             Task { @MainActor in
                 ListeningManager.shared.sendDetectionNotification(event: event)
             }
@@ -557,8 +488,6 @@ final class ListeningManager: ObservableObject {
         guard backgroundTaskIdentifier == .invalid else { return }
         backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "AuraListening") { [weak self] in
             Task { @MainActor in
-                print("Aura temporary background task expired. Audio should keep running only if background audio mode is active.")
-                self?.logListeningStatus("background task expired")
                 self?.endBackgroundListeningTask()
             }
         }
