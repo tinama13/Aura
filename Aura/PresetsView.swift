@@ -6,97 +6,131 @@
 //
 
 import SwiftUI
+import Combine
 
 struct PresetsView: View {
-    @State private var selectedPreset: PresetMode = .driving
-    @State private var selectedCategories: [PresetMode: Set<String>] = [
-        .driving: ["Sirens and alarms"],
-        .walking: ["Crosswalk signals"],
-        .home: ["Doorbell"],
-        .publicPlace: ["Name called"]
-    ]
-
+    @EnvironmentObject var presetManager: PresetManager
+    @EnvironmentObject var soundManager: SoundManager
+    @AppStorage("auraTutorialStepName") private var tutorialStepName = ""
+    
+    @State private var showingNewPresetSheet = false
+    @State private var showingAddSheet = false
+    @State private var showingAllPresetsSheet = false
+    
     private let columns = [
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
-
+    
     var body: some View {
         VStack(spacing: 0) {
-            HStack(alignment: .center) {
-                Text("Aura")
-                    .font(.custom("Snell Roundhand", size: 34))
-                    .fontWeight(.bold)
-                    .foregroundStyle(.black)
-
-                Spacer()
-
-                Button("View all") {
-                    selectAllCategories()
-                }
-                .font(.custom("Itim", size: 23))
-                .fontWeight(.bold)
-                .foregroundStyle(.black)
-                .padding(.horizontal, 15)
-                .frame(height: 48)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(Color.black.opacity(0.75), lineWidth: 1)
-                }
-            }
-            .padding(.top, 34)
-            .padding(.horizontal, 26)
-
+            AuraHeaderView()
+                .padding(.top, 20)
+            
             LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(PresetMode.allCases) { preset in
+                ForEach(presetManager.favoritePresets) { preset in
                     PresetModeButton(
                         preset: preset,
-                        isSelected: selectedPreset == preset
+                        isSelected: presetManager.activePresetID == preset.id,
+                        onLongPress: {
+                            if tutorialStepName == "holdPreset" {
+                                guard presetManager.activePresetID == preset.id else { return }
+                                showingAddSheet = true
+                                NotificationCenter.default.post(name: .auraTutorialPresetHeld, object: nil)
+                            } else if tutorialStepName.isEmpty {
+                                presetManager.activePresetID = preset.id
+                                showingAddSheet = true
+                            }
+                        }
                     ) {
-                        selectedPreset = preset
+                        guard tutorialStepName.isEmpty else { return }
+                        presetManager.activePresetID = preset.id
                     }
                 }
             }
             .padding(.top, 28)
             .padding(.horizontal, 26)
-
+            
+            Button(action: {
+                guard tutorialStepName.isEmpty else { return }
+                showingAllPresetsSheet = true
+            }) {
+                HStack {
+                    Text("View all presets")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.black)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.gray)
+                        .font(.system(size: 16, weight: .semibold))
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(Color(white: 0.95))
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 26)
+            .padding(.top, 16)
+            .sheet(isPresented: $showingAllPresetsSheet) {
+                AllPresetsView()
+            }
+            
             Rectangle()
                 .fill(Color.black.opacity(0.9))
                 .frame(height: 2)
                 .padding(.top, 20)
                 .padding(.horizontal, 26)
-
+            
             VStack(alignment: .leading, spacing: 18) {
-                Text("Preset for \(selectedPreset.title)")
-                    .font(.custom("Itim", size: 24))
-                    .fontWeight(.bold)
-                    .foregroundStyle(.black)
-
-                VStack(spacing: 12) {
-                    ForEach(selectedPreset.categories, id: \.self) { category in
-                        CategoryRow(
-                            title: category,
-                            isSelected: selectedCategories[selectedPreset, default: []].contains(category)
-                        ) {
-                            toggleCategory(category)
+                HStack(alignment: .center) {
+                    Text("Preset for \(presetManager.activePreset.title)")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(.black)
+                    
+                    Spacer()
+                }
+                
+                ScrollView {
+                    VStack(spacing: 8) {
+                        ForEach(presetManager.getVisibleSounds(for: presetManager.activePreset), id: \.self) { category in
+                            let isDefaultSound = presetManager.isDefaultSound(
+                                presetID: presetManager.activePresetID,
+                                soundName: category
+                            )
+                            
+                            CategoryRow(
+                                title: category,
+                                isSelected: presetManager.isSoundSelected(presetID: presetManager.activePresetID, soundName: category),
+                                isLocked: isDefaultSound
+                            )
                         }
                     }
+                    .padding(.horizontal, 2)
+                    .padding(.top, 2)
+                    .padding(.bottom, 10)
+                }
+                .frame(maxHeight: .infinity)
+                .sheet(isPresented: $showingAddSheet) {
+                    AddSoundsToPresetView()
                 }
             }
             .padding(.top, 26)
             .padding(.horizontal, 26)
-
+            
             Spacer()
-
+            
             Button {
-                addNewPresetItem()
+                guard tutorialStepName.isEmpty else { return }
+                showingNewPresetSheet = true // 👉 FIXED: This triggers the sheet to open
             } label: {
                 HStack(spacing: 10) {
                     Image(systemName: "star.circle.fill")
                         .font(.system(size: 20, weight: .semibold))
-
                     Text("Make New Preset")
                         .font(.system(size: 14, weight: .bold))
                 }
@@ -106,103 +140,41 @@ struct PresetsView: View {
                 .clipShape(Capsule())
             }
             .buttonStyle(.plain)
+            .anchorPreference(key: AuraTutorialHighlightPreferenceKey.self, value: .bounds) { anchor in
+                [.newPresetButton: anchor]
+            }
             .padding(.bottom, 40)
+            .sheet(isPresented: $showingNewPresetSheet) { // 👉 FIXED: This tells it which view to show
+                NewPresetView()
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.white)
     }
-
-    private func toggleCategory(_ category: String) {
-        var categories = selectedCategories[selectedPreset, default: []]
-
-        if categories.contains(category) {
-            categories.remove(category)
-        } else {
-            categories.insert(category)
-        }
-
-        selectedCategories[selectedPreset] = categories
-    }
-
-    private func selectAllCategories() {
-        selectedCategories[selectedPreset] = Set(selectedPreset.categories)
-    }
-
-    private func addNewPresetItem() {
-        if let firstCategory = selectedPreset.categories.first {
-            selectedCategories[selectedPreset, default: []].insert(firstCategory)
-        }
-    }
 }
 
-private enum PresetMode: String, CaseIterable, Identifiable {
-    case driving
-    case walking
-    case home
-    case publicPlace
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .driving:
-            return "Driving"
-        case .walking:
-            return "Walking"
-        case .home:
-            return "Home"
-        case .publicPlace:
-            return "Public"
-        }
-    }
-
-    var iconName: String {
-        switch self {
-        case .driving:
-            return "steeringwheel"
-        case .walking:
-            return "figure.walk"
-        case .home:
-            return "house.fill"
-        case .publicPlace:
-            return "speaker.wave.2.fill"
-        }
-    }
-
-    var categories: [String] {
-        switch self {
-        case .driving:
-            return ["Sirens and alarms", "Car horns", "Emergency vehicles", "Train crossings"]
-        case .walking:
-            return ["Crosswalk signals", "Bike bells", "Approaching cars", "People shouting"]
-        case .home:
-            return ["Doorbell", "Kitchen timer", "Smoke alarm", "Baby crying"]
-        case .publicPlace:
-            return ["Name called", "Announcements", "Phone ringing", "Loud alarms"]
-        }
-    }
-}
+// MARK: - Subviews
 
 private struct PresetModeButton: View {
-    let preset: PresetMode
+    let preset: Preset
     let isSelected: Bool
+    let onLongPress: () -> Void
     let action: () -> Void
-
+    
     var body: some View {
         Button(action: action) {
             VStack(spacing: 8) {
                 Image(systemName: preset.iconName)
-                    .font(.system(size: 38, weight: .bold))
+                    .font(.system(size: 44, weight: .bold))
                     .foregroundStyle(.black.opacity(0.9))
-                    .frame(height: 44)
-
+                    .frame(width: 62, height: 54)
+                
                 Text(preset.title)
-                    .font(.custom("Itim", size: 28))
-                    .fontWeight(.bold)
+                    .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(.black)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 116)
+            .frame(height: 104)
             .background(isSelected ? Color(red: 0.85, green: 0.95, blue: 1.0) : Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .overlay {
@@ -211,43 +183,47 @@ private struct PresetModeButton: View {
             }
         }
         .buttonStyle(.plain)
+        .simultaneousGesture(
+            LongPressGesture()
+                .onEnded { _ in onLongPress() }
+        )
     }
 }
 
 private struct CategoryRow: View {
     let title: String
     let isSelected: Bool
-    let action: () -> Void
-
+    let isLocked: Bool
+    
     var body: some View {
-        Button(action: action) {
-            HStack {
-                Text(title)
-                    .font(.custom("Itim", size: 20))
-                    .fontWeight(.bold)
-                    .foregroundStyle(.black)
-
-                Spacer()
-
-                if isSelected {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 19, weight: .bold))
-                        .foregroundStyle(.black)
-                }
-            }
-            .padding(.horizontal, 10)
-            .frame(height: 47)
-            .background(Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .stroke(Color.black.opacity(0.38), lineWidth: 1)
+        HStack {
+            Text(title)
+                .font(.system(size: 17, weight: .bold))
+                .foregroundStyle(isLocked ? .gray : .black)
+            
+            Spacer()
+            
+            if isSelected {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(isLocked ? .gray : .black)
             }
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 10)
+        .frame(height: 36)
+        .background(Color.white)
+        .opacity(isLocked ? 0.65 : 1.0)
+        .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 9, style: .continuous)
+                .stroke(Color.black.opacity(0.38), lineWidth: 1)
+        }
     }
 }
 
 #Preview {
     PresetsView()
+        .environmentObject(SoundManager())
+        .environmentObject(PresetManager())
+        .environmentObject(HistoryManager())
 }

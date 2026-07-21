@@ -10,40 +10,68 @@ import SwiftUI
 struct NavBar: View {
     @Binding var current_tab: Tab
     
+    private let accentBlue = Color(red: 0.204, green: 0.678, blue: 0.914)
+    
     var body: some View {
         HStack {
-            ForEach(Tab.allCases, id: \.rawValue) {
-                tab in
-                
+            ForEach(Tab.allCases, id: \.rawValue) { tab in
                 Spacer()
                 
-                Button (action: {
+                Button(action: {
                     current_tab = tab
                 }) {
-                    VStack {
+                    VStack(spacing: 4) {
                         Image(systemName: tab.iconName)
                             .font(.system(size: 24))
-                            .foregroundColor(.black)
+<<<<<<< HEAD
+                            .foregroundColor(current_tab == tab ? accentBlue : .black.opacity(0.8))
                             .padding(.horizontal, 20)
                             .padding(.vertical, 8)
                             .background(
                                 Capsule()
-                                    .fill(current_tab == tab ? Color.purple.opacity(0.15) : Color.clear)
+                                    .fill(current_tab == tab ? accentBlue.opacity(0.15) : Color.clear)
                             )
+=======
+                            .foregroundColor(.black)
+>>>>>>> origin/joseph
                         
                         Text(tab.rawValue)
-                            .font(.caption2)
-                            .foregroundColor(.black.opacity(0.7))
+                            .font(.custom("MarkerFelt-Thin", size: 12))
+                            .foregroundColor(current_tab == tab ? accentBlue : .black.opacity(0.6))
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(current_tab == tab ? Color.purple.opacity(0.15) : Color.clear)
+                    )
+                    .anchorPreference(key: AuraTutorialHighlightPreferenceKey.self, value: .bounds) { anchor in
+                        if let target = highlightTarget(for: tab) {
+                            [target: anchor]
+                        } else {
+                            [:]
+                        }
                     }
                 }
+                .buttonStyle(.plain)
                 
                 Spacer()
             }
         }
-        
         .padding(.top, 12)
         .padding(.bottom, 30)
         .background(Color(red: 0.88, green: 0.93, blue: 0.96))
+    }
+    
+    private func highlightTarget(for tab: Tab) -> AuraTutorialHighlightTarget? {
+        switch tab {
+        case .presets:
+            return .presetsTab
+        case .sounds:
+            return .soundsTab
+        case .home:
+            return nil
+        }
     }
 }
 
