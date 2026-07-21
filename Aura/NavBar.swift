@@ -23,6 +23,7 @@ struct NavBar: View {
                     VStack(spacing: 4) {
                         Image(systemName: tab.iconName)
                             .font(.system(size: 24))
+<<<<<<< HEAD
                             .foregroundColor(current_tab == tab ? accentBlue : .black.opacity(0.8))
                             .padding(.horizontal, 20)
                             .padding(.vertical, 8)
@@ -30,10 +31,26 @@ struct NavBar: View {
                                 Capsule()
                                     .fill(current_tab == tab ? accentBlue.opacity(0.15) : Color.clear)
                             )
+=======
+                            .foregroundColor(.black)
+>>>>>>> origin/joseph
                         
                         Text(tab.rawValue)
                             .font(.custom("MarkerFelt-Thin", size: 12))
                             .foregroundColor(current_tab == tab ? accentBlue : .black.opacity(0.6))
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(current_tab == tab ? Color.purple.opacity(0.15) : Color.clear)
+                    )
+                    .anchorPreference(key: AuraTutorialHighlightPreferenceKey.self, value: .bounds) { anchor in
+                        if let target = highlightTarget(for: tab) {
+                            [target: anchor]
+                        } else {
+                            [:]
+                        }
                     }
                 }
                 .buttonStyle(.plain)
@@ -44,6 +61,17 @@ struct NavBar: View {
         .padding(.top, 12)
         .padding(.bottom, 30)
         .background(Color(red: 0.88, green: 0.93, blue: 0.96))
+    }
+    
+    private func highlightTarget(for tab: Tab) -> AuraTutorialHighlightTarget? {
+        switch tab {
+        case .presets:
+            return .presetsTab
+        case .sounds:
+            return .soundsTab
+        case .home:
+            return nil
+        }
     }
 }
 

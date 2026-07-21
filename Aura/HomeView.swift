@@ -1,5 +1,4 @@
 import SwiftUI
-import UserNotifications
 import Combine
 
 struct HomeView: View {
@@ -47,57 +46,62 @@ struct HomeView: View {
                         .foregroundStyle(.black)
                         .padding(.top, 30)
                     
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            listeningManager.toggleListening()
-                            isPulsing = listeningManager.isListening
-                        }
-                    } label: {
-                        ZStack {
-                            if listeningManager.isListening {
-                                Circle()
-                                    .stroke(Color.green.opacity(0.22), lineWidth: 5)
-                                    .frame(width: 170, height: 170)
-                                    .scaleEffect(isPulsing ? 1.18 : 1.0)
-                                    .opacity(isPulsing ? 0.0 : 1.0)
-                                    .animation(
-                                        .easeOut(duration: 1.0).repeatForever(autoreverses: false),
-                                        value: isPulsing
-                                    )
+                    VStack(spacing: 0) {
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                listeningManager.toggleListening()
+                                isPulsing = listeningManager.isListening
                             }
-                            
-                            Circle()
-                                .fill(listeningManager.isListening ? Color.green.opacity(0.12) : Color.clear)
-                                .frame(width: 170, height: 170)
-                            
-                            Circle()
-                                .stroke(
-                                    listeningManager.isListening ? Color.green : Color.black.opacity(0.85),
-                                    style: StrokeStyle(
-                                        lineWidth: 4,
-                                        lineCap: .round,
-                                        dash: listeningManager.isListening ? [4, 9] : []
+                        } label: {
+                            ZStack {
+                                if listeningManager.isListening {
+                                    Circle()
+                                        .stroke(Color.green.opacity(0.22), lineWidth: 5)
+                                        .frame(width: 170, height: 170)
+                                        .scaleEffect(isPulsing ? 1.18 : 1.0)
+                                        .opacity(isPulsing ? 0.0 : 1.0)
+                                        .animation(
+                                            .easeOut(duration: 1.0).repeatForever(autoreverses: false),
+                                            value: isPulsing
+                                        )
+                                }
+                                
+                                Circle()
+                                    .fill(listeningManager.isListening ? Color.green.opacity(0.12) : Color.clear)
+                                    .frame(width: 170, height: 170)
+                                
+                                Circle()
+                                    .stroke(
+                                        listeningManager.isListening ? Color.green : Color.black.opacity(0.85),
+                                        style: StrokeStyle(
+                                            lineWidth: 4,
+                                            lineCap: .round,
+                                            dash: listeningManager.isListening ? [4, 9] : []
+                                        )
                                     )
-                                )
-                                .frame(width: 170, height: 170)
-                            
-                            Image(systemName: "ear")
-                                .font(.system(size: 92, weight: .regular))
-                                .foregroundStyle(listeningManager.isListening ? .green : .black)
+                                    .frame(width: 170, height: 170)
+                                
+                                Image(systemName: "ear")
+                                    .font(.system(size: 92, weight: .regular))
+                                    .foregroundStyle(listeningManager.isListening ? .green : .black)
+                            }
+                            .frame(width: 180, height: 180)
+                            .contentShape(Circle())
                         }
-                        .frame(width: 180, height: 180)
-                        .contentShape(Circle())
+                        .buttonStyle(.plain)
+                        
+                        Text(listeningManager.isListening ? "Listening" : "Tap to Start\nListening")
+                            .font(.system(size: 25, weight: .bold))
+                            .lineSpacing(1)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.black)
+                            .frame(height: 62)
+                            .padding(.top, 24)
                     }
-                    .buttonStyle(.plain)
+                    .anchorPreference(key: AuraTutorialHighlightPreferenceKey.self, value: .bounds) { anchor in
+                        [.startListening: anchor]
+                    }
                     .padding(.top, 34)
-                    
-                    Text(listeningManager.isListening ? "Listening" : "Tap to Start\nListening")
-                        .font(.system(size: 25, weight: .bold))
-                        .lineSpacing(1)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(.black)
-                        .frame(height: 62)
-                        .padding(.top, 24)
                     
                     Rectangle()
                         .fill(Color.black.opacity(0.9))
@@ -121,7 +125,7 @@ struct HomeView: View {
                         .padding(.horizontal, 26)
                         .padding(.top, 16)
                         
-                        ForEach(historyManager.events.prefix(3)) { event in
+                        ForEach(historyManager.events.filter { $0.audioFileURL != nil }.prefix(7)) { event in
                             NavigationLink(destination: EventTimelineView(event: event)) {
                                 HStack {
                                     Text(event.name)
@@ -143,6 +147,9 @@ struct HomeView: View {
                                 .padding(.horizontal, 26)
                             }
                         }
+                    }
+                    .anchorPreference(key: AuraTutorialHighlightPreferenceKey.self, value: .bounds) { anchor in
+                        [.recentList: anchor]
                     }
                     
                     Spacer()
@@ -186,6 +193,7 @@ struct HomeView: View {
         .onChange(of: listeningManager.isListening) { oldValue, newValue in
             isPulsing = newValue
         }
+<<<<<<< HEAD
         .onChange(of: listeningManager.latestAcceptedEvent) { oldValue, newEvent in
             guard let event = newEvent else { return }
             
@@ -196,6 +204,33 @@ struct HomeView: View {
             
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 self.showAlert = true
+=======
+    }
+    
+    private func isEnabledInActivePreset(_ detectedSound: String) -> Bool {
+        let activeSounds = (presetManager.selectedSounds[presetManager.activePresetID] ?? Set(presetManager.activePreset.defaultSounds))
+            .union(presetManager.activePreset.defaultSounds)
+        let normalizedDetection = normalizedSoundName(detectedSound)
+        
+        return activeSounds.contains { activeSound in
+            let normalizedActiveSound = normalizedSoundName(activeSound)
+            return normalizedActiveSound == normalizedDetection
+                || normalizedActiveSound.contains(normalizedDetection)
+                || normalizedDetection.contains(normalizedActiveSound)
+        }
+    }
+    
+    private func normalizedSoundName(_ name: String) -> String {
+        name.lowercased().filter { $0.isLetter || $0.isNumber }
+    }
+    
+    private func formattedSoundName(_ name: String) -> String {
+        name
+            .replacingOccurrences(of: "_", with: " ")
+            .split(separator: " ")
+            .map { word in
+                word.prefix(1).uppercased() + word.dropFirst().lowercased()
+>>>>>>> origin/joseph
             }
         }
     }

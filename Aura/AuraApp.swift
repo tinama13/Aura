@@ -73,6 +73,14 @@ struct AuraApp: App {
     init() {
         ListeningManager.registerNotificationActions()
         UNUserNotificationCenter.current().delegate = notificationDelegate
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error {
+                print("Aura notification authorization failed: \(error.localizedDescription)")
+            }
+            if !granted {
+                print("Aura notification authorization was not granted.")
+            }
+        }
     }
     
     var body: some Scene {

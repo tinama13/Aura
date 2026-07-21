@@ -14,6 +14,7 @@ private enum AuraControlIntentStorage {
     }
     
     static func requestListening(_ isListening: Bool) {
+        defaults.set(isListening, forKey: isListeningKey)
         defaults.set(isListening, forKey: requestedListeningKey)
         defaults.set(UUID().uuidString, forKey: listeningRequestIDKey)
         defaults.synchronize()
@@ -40,7 +41,7 @@ private enum AuraControlIntentStorage {
 
 struct ToggleAuraListeningIntent: SetValueIntent, LiveActivityIntent {
     static let title: LocalizedStringResource = "Toggle Aura Listening"
-    static var openAppWhenRun: Bool = false
+    static var openAppWhenRun: Bool = true
     
     @Parameter(title: "Aura is listening")
     var value: Bool

@@ -35,6 +35,11 @@ struct NewPresetView: View {
         soundManager.sounds.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
     
+    private var areAllSoundsSelected: Bool {
+        let soundNames = Set(sortedSounds.map { $0.name })
+        return !soundNames.isEmpty && soundNames.isSubset(of: selectedSounds)
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             AuraHeaderView()
@@ -97,9 +102,36 @@ struct NewPresetView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Select Sounds")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.gray)
+                        HStack {
+                            Text("Select Sounds")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.gray)
+                            
+                            Spacer()
+                            
+                            Button {
+                                if areAllSoundsSelected {
+                                    selectedSounds.removeAll()
+                                } else {
+                                    selectedSounds = Set(sortedSounds.map { $0.name })
+                                }
+                            } label: {
+                                HStack(spacing: 7) {
+                                    Image(systemName: areAllSoundsSelected ? "minus.circle.fill" : "checkmark.circle.fill")
+                                        .font(.system(size: 15, weight: .bold))
+                                    Text(areAllSoundsSelected ? "Deselect All Sounds" : "Select All Sounds")
+                                        .font(.system(size: 13, weight: .bold))
+                                }
+                                .foregroundColor(areAllSoundsSelected ? Color(red: 0.42, green: 0.29, blue: 0.72) : .white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 9)
+                                .background(areAllSoundsSelected ? Color(red: 0.94, green: 0.91, blue: 0.98) : Color(red: 0.204, green: 0.678, blue: 0.914))
+                                .clipShape(Capsule())
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(sortedSounds.isEmpty)
+                            .opacity(sortedSounds.isEmpty ? 0.45 : 1)
+                        }
                         
                         VStack(spacing: 12) {
                             ForEach(sortedSounds) { sound in
