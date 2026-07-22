@@ -8,11 +8,15 @@ struct AuraHeaderView: View {
                 .scaledToFit()
                 .frame(width: 44, height: 44)
                 .clipShape(Circle())
-
+                .overlay(
+                    Circle()
+                        .stroke(Color(red: 0.204, green: 0.678, blue: 0.914), lineWidth: 2)
+                )
+            
             Text("Aura")
                 .font(.custom("MarkerFelt-Thin", size: 30))
                 .foregroundStyle(.black)
-
+            
             Spacer()
         }
         .padding(.horizontal, 20)

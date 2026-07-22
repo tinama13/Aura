@@ -41,7 +41,7 @@ struct HomeView: View {
                     }
                     .padding(.top, 20)
                     
-                    Text(presetManager.activePreset.title)
+                    Text("Mode: \(presetManager.activePreset.title)")
                         .font(.system(size: 30, weight: .bold))
                         .foregroundStyle(.black)
                         .padding(.top, 30)

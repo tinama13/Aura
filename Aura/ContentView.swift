@@ -342,9 +342,9 @@ private enum AuraTutorialStep: Int, CaseIterable {
         case .startListening:
             return CGRect(x: (size.width - 232) / 2, y: 188, width: 232, height: 278)
         case .recentList:
-            let top = min(500, size.height - 350)
-            let bottom = max(top + 110, size.height - 118)
-            return CGRect(x: 20, y: top, width: size.width - 40, height: bottom - top)
+            let top: CGFloat = size.height - 340
+            let height: CGFloat = 245
+            return CGRect(x: 20, y: top, width: size.width - 40, height: height)
         case .switchToPresets:
             return navHighlightFrame(for: .presets, in: size)
         case .presets:

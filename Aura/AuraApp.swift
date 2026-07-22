@@ -70,26 +70,29 @@ struct AuraApp: App {
     @StateObject private var listeningManager = ListeningManager.shared
     private let notificationDelegate = NotificationDelegate()
     
-    init() {
-        ListeningManager.registerNotificationActions()
-        UNUserNotificationCenter.current().delegate = notificationDelegate
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if let error {
-                print("Aura notification authorization failed: \(error.localizedDescription)")
-            }
-            if !granted {
-                print("Aura notification authorization was not granted.")
-            }
-        }
-    }
+    @State private var showSplash = true
     
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environmentObject(soundManager)
-                .environmentObject(presetManager)
-                .environmentObject(historyManager)
-                .environmentObject(listeningManager)
+            ZStack {
+                if showSplash {
+                    SplashView()
+                        .transition(.opacity)
+                } else {
+                    RootView()
+                        .environmentObject(soundManager)
+                        .environmentObject(presetManager)
+                        .environmentObject(historyManager)
+                        .environmentObject(listeningManager)
+                }
+            }
+            .task {
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    showSplash = false
+                }
+            }
         }
     }
 }

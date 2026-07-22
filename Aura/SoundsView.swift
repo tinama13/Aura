@@ -24,8 +24,6 @@ struct SoundsView: View {
     let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
     var body: some View {
-        // No NavigationStack here — ContentView provides one for the whole app,
-        // so the NavigationLinks below push their screens over the full screen.
         VStack(spacing: 0) {
             AuraHeaderView()
                 .padding(.top, 20)
@@ -51,7 +49,6 @@ struct SoundsView: View {
             .padding(.vertical, 8)
 
             ScrollViewReader { proxy in
-
                 HStack(spacing: 0) {
 
                     ScrollView {
@@ -80,7 +77,7 @@ struct SoundsView: View {
                             }
                         }
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
+                        .padding(.bottom, 100)
                     }
 
                     VStack(spacing: 2) {
@@ -141,8 +138,6 @@ private struct SoundListRow: View {
 }
 
 #Preview {
-    // The preview needs its own NavigationStack (the app gets one from
-    // ContentView, but this preview shows SoundsView alone).
     NavigationStack {
         SoundsView()
     }
