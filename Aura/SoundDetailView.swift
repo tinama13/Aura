@@ -9,13 +9,32 @@ import SwiftUI
 
 struct SoundDetailView: View {
     let soundName: String
+    @State private var editedName: String = ""
     @State private var notes: String = ""
+    @State private var validationMessage: String?
     @Environment(\.dismiss) private var dismiss
     
     @EnvironmentObject var soundManager: SoundManager
+    @EnvironmentObject var presetManager: PresetManager
     
     private func saveNote() {
-        soundManager.updateNotes(for: soundName, notes: notes)
+        let trimmedName = editedName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
+            validationMessage = "Name cannot be empty."
+            return
+        }
+
+        var savedSoundName = soundName
+        if isCustomSound && trimmedName != soundName {
+            guard soundManager.renameSound(from: soundName, to: trimmedName) else {
+                validationMessage = "A sound with that name already exists."
+                return
+            }
+            presetManager.renameSound(from: soundName, to: trimmedName)
+            savedSoundName = trimmedName
+        }
+
+        soundManager.updateNotes(for: savedSoundName, notes: notes)
         dismiss()
     }
     
@@ -37,7 +56,7 @@ struct SoundDetailView: View {
                         .foregroundColor(.black)
                 }
                 Spacer()
-                Text(soundName)
+                Text(editedName.isEmpty ? soundName : editedName)
                     .font(.system(size: 18, weight: .bold))
                 Spacer()
                 Image(systemName: "chevron.left").opacity(0)
@@ -51,11 +70,27 @@ struct SoundDetailView: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.gray)
                     
-                    Text(soundName)
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(white: 0.95))
-                        .cornerRadius(12)
+                    if isCustomSound {
+                        TextField("Sound name", text: $editedName)
+                            .padding()
+                            .background(Color(white: 0.95))
+                            .cornerRadius(12)
+                            .onChange(of: editedName) {
+                                validationMessage = nil
+                            }
+
+                        if let validationMessage {
+                            Text(validationMessage)
+                                .font(.system(size: 13))
+                                .foregroundColor(.red)
+                        }
+                    } else {
+                        Text(soundName)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color(white: 0.95))
+                            .cornerRadius(12)
+                    }
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
@@ -138,6 +173,7 @@ struct SoundDetailView: View {
         .navigationBarBackButtonHidden(true)
         .onAppear {
             // Show any note that was saved for this sound before
+            editedName = soundName
             notes = soundManager.sounds.first(where: { $0.name == soundName })?.notes ?? ""
         }
     }

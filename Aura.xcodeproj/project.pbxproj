@@ -267,7 +267,7 @@
 				CODE_SIGN_ENTITLEMENTS = AuraControlsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MYW68BX88D;
+				DEVELOPMENT_TEAM = 3F99RQF6PG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AuraControls/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = AuraControls;
@@ -279,7 +279,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = app.tinama.aura.test3.extension;
+				PRODUCT_BUNDLE_IDENTIFIER = app.tinama.aura.test32.extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -299,7 +299,7 @@
 				CODE_SIGN_ENTITLEMENTS = AuraControlsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MYW68BX88D;
+				DEVELOPMENT_TEAM = 3F99RQF6PG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AuraControls/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = AuraControls;
@@ -311,7 +311,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = app.tinama.aura.test3.extension;
+				PRODUCT_BUNDLE_IDENTIFIER = app.tinama.aura.test32.extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -454,7 +454,7 @@
 				CODE_SIGN_ENTITLEMENTS = Aura/Aura.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MYW68BX88D;
+				DEVELOPMENT_TEAM = 3F99RQF6PG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Aura/Info.plist;
@@ -469,7 +469,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = app.tinama.aura.test3;
+				PRODUCT_BUNDLE_IDENTIFIER = app.tinama.aura.test32;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -489,7 +489,7 @@
 				CODE_SIGN_ENTITLEMENTS = Aura/Aura.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MYW68BX88D;
+				DEVELOPMENT_TEAM = 3F99RQF6PG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Aura/Info.plist;
@@ -504,7 +504,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = app.tinama.aura.test3;
+				PRODUCT_BUNDLE_IDENTIFIER = app.tinama.aura.test32;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

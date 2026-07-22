@@ -193,6 +193,20 @@ class PresetManager: ObservableObject {
         activePresetID = newPreset.id
         keepFirstFourFavorites()
     }
+
+    func renameSound(from oldName: String, to newName: String) {
+        for index in presets.indices {
+            presets[index].defaultSounds = presets[index].defaultSounds.map { $0 == oldName ? newName : $0 }
+        }
+
+        selectedSounds = selectedSounds.mapValues { sounds in
+            var updatedSounds = sounds
+            if updatedSounds.remove(oldName) != nil {
+                updatedSounds.insert(newName)
+            }
+            return updatedSounds
+        }
+    }
     
     private func lockedDefaultSounds(for preset: Preset) -> [String] {
         preset.isBuiltIn ? preset.defaultSounds : []

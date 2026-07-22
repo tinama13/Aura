@@ -178,7 +178,7 @@ class SoundRecognizer: NSObject, ObservableObject, SNResultsObserving {
             self.silenceSourceNode = nil
         }
         if let analyzer = streamAnalyzer, let request = currentRequest {
-            try? analyzer.remove(request)
+            analyzer.remove(request)
         }
 
         streamAnalyzer = nil

@@ -11,7 +11,7 @@ import Combine
 
 struct Sound: Identifiable, Codable {
     var id = UUID()
-    let name: String
+    var name: String
     var isUserCreated: Bool = false
     var notes: String = ""
 }
@@ -72,6 +72,20 @@ class SoundManager: ObservableObject {
     
     func deleteSound(name: String) {
         sounds.removeAll { $0.name == name }
+    }
+
+    func renameSound(from oldName: String, to newName: String) -> Bool {
+        let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { return false }
+        guard let index = sounds.firstIndex(where: { $0.name == oldName && $0.isUserCreated }) else { return false }
+
+        let nameAlreadyExists = sounds.contains {
+            $0.name.localizedCaseInsensitiveCompare(trimmedName) == .orderedSame && $0.name != oldName
+        }
+        guard !nameAlreadyExists else { return false }
+
+        sounds[index].name = trimmedName
+        return true
     }
 
     func updateNotes(for name: String, notes: String) {
